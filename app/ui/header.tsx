@@ -10,8 +10,10 @@ import Link from "next/link";
 import Image from "next/image";
 import Logo from "../../public/expensify-seeklogo.png";
 import { PenBox, LayoutDashboard } from "lucide-react";
+import { checkUser } from "@/app/lib/actions";
 
-export default function Header() {
+export default async function Header() {
+    await checkUser();
     return (
         <header className="flex items-center h-20 bg-white border-b border-gray-200">
             <nav className="flex justify-between w-full items-center px-6">

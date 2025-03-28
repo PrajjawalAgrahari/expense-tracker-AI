@@ -1,0 +1,41 @@
+import { currentUser } from "@clerk/nextjs/server";
+import { PrismaClient } from "@/generated/prisma";
+
+const prisma = new PrismaClient();
+
+export async function checkUser() {
+    const user = await currentUser();
+    if (!user) {
+        return null;
+    }
+    // console.log(user);
+    try {
+        const loggedInUser = await prisma.user.findUnique({
+            where: {
+                clerkUserId: user.id,
+            },
+        })
+        if (loggedInUser) {
+            return loggedInUser;
+        }
+        const name = `${user.firstName} ${user.lastName}`;
+        const newUser = await prisma.user.create({
+            data: {
+                clerkUserId: user.id,
+                email: user.emailAddresses[0].emailAddress,
+                name,
+                imageUrl: user.imageUrl,
+            },
+        })
+
+        return newUser;
+    } catch (error) {
+        // error may not always have a message property, especially in TypeScript if error is not an instance of Error.
+        if (error instanceof Error) {
+            console.error(error.message);
+        } else {
+            console.error("An unknown error occurred:", error);
+        }
+        // console.log(error)
+    }
+}
