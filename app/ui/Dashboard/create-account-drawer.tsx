@@ -84,11 +84,10 @@ export default function CreateAccountDrawer({
                   id="name"
                   {...register("name")}
                 ></Input>
+                {errors?.name && (
+                  <p className="text-red-500">{errors.name?.message}</p>
+                )}
               </div>
-
-              {errors?.name && (
-                <p className="text-red-500">{errors.name?.message}</p>
-              )}
 
               <div className="flex flex-col gap-1">
                 <label className="font-[500]" htmlFor="type">
@@ -109,11 +108,10 @@ export default function CreateAccountDrawer({
                     <SelectItem value="SAVINGS">Savings</SelectItem>
                   </SelectContent>
                 </Select>
+                {errors?.type && (
+                  <p className="text-red-500">{errors.type?.message}</p>
+                )}
               </div>
-
-              {errors?.type && (
-                <p className="text-red-500">{errors.type?.message}</p>
-              )}
 
               <div className="flex flex-col gap-1">
                 <label className="font-[500]" htmlFor="balance">
@@ -126,11 +124,10 @@ export default function CreateAccountDrawer({
                   id="balance"
                   {...register("balance")}
                 ></Input>
+                {errors?.balance && (
+                  <p className="text-red-500">{errors.balance?.message}</p>
+                )}
               </div>
-
-              {errors?.balance && (
-                <p className="text-red-500">{errors.balance?.message}</p>
-              )}
 
               <div className="flex justify-between items-center border-1 border-gray-300 py-4 px-3 rounded-md">
                 <div className="flex flex-col gap-[1px]">
