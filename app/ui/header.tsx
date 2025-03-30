@@ -10,7 +10,7 @@ import Link from "next/link";
 import Image from "next/image";
 import Logo from "../../public/expensify-seeklogo.png";
 import { PenBox, LayoutDashboard } from "lucide-react";
-import { checkUser } from "@/app/lib/actions";
+import { checkUser } from "@/app/lib/checkUser";
 
 export default async function Header() {
     await checkUser();
@@ -30,13 +30,13 @@ export default async function Header() {
                     </SignedOut>
                     <SignedIn>
                         <Link href="/dashboard">
-                            <Button variant={"outline"}>
+                            <Button className="cursor-pointer" variant={"outline"}>
                                 <LayoutDashboard size={18} />
                                 <span>Dashboard</span>
                             </Button>
                         </Link>
                         <Link href="/transaction/create">
-                            <Button>
+                            <Button className="cursor-pointer">
                                 <PenBox size={18} />
                                 <span>Add Transaction</span>
                             </Button>
