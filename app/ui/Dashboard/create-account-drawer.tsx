@@ -1,12 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Toaster, toast } from "sonner";
 import {
   Drawer,
   DrawerClose,
   DrawerContent,
   DrawerHeader,
-  DrawerOverlay,
   DrawerPortal,
   DrawerTitle,
   DrawerTrigger,
@@ -25,7 +25,9 @@ import { AccountData } from "@/app/lib/type";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { createAccount } from "@/app/lib/dashboard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { newAccountSubmission } from "@/app/lib/data-submission";
+import { Loader2 } from "lucide-react";
 
 export default function CreateAccountDrawer({
   children,
@@ -51,14 +53,28 @@ export default function CreateAccountDrawer({
     },
   });
 
+  const {
+    data: newAccount,
+    loading: isAccountLoading,
+    error,
+    submitAccount,
+  } = newAccountSubmission(createAccount);
+
   const onSubmit = async (data: AccountData) => {
-    await createAccount(data);
-    setOpen(false);
-    reset();
+    await submitAccount(data).then(() => {
+      if (error !== "") {
+        toast.error(error);
+      } else {
+        toast.success("Account created successfully");
+      }
+      setOpen(false);
+      reset();
+    });
   };
 
   return (
     <Drawer open={open} onOpenChange={setOpen}>
+      <Toaster />
       <DrawerTrigger>{children}</DrawerTrigger>
       <DrawerPortal>
         <DrawerContent>
@@ -158,8 +174,19 @@ export default function CreateAccountDrawer({
                     Cancel
                   </Button>
                 </DrawerClose>
-                <Button className="w-[50%] cursor-pointer" type="submit">
-                  Submit
+                <Button
+                  className="w-[50%] cursor-pointer"
+                  type="submit"
+                  disabled={isAccountLoading}
+                >
+                  {isAccountLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                      Creating...
+                    </>
+                  ) : (
+                    "Create Account"
+                  )}
                 </Button>
               </div>
             </form>

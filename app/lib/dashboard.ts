@@ -38,7 +38,7 @@ export async function createAccount(data: any) {
             },
         }).then((accounts) => accounts.length)
 
-        if(numberOfAccounts > 0 && data.isDefault) {
+        if (numberOfAccounts > 0 && data.isDefault) {
             throw new Error('You can only have one default account')
         }
 
@@ -70,7 +70,8 @@ export async function createAccount(data: any) {
 
     } catch (error) {
         if (error instanceof Error) {
-            console.log(error.message)
+            console.error("Error creating account:", error?.message);
+            throw error
         }
     }
 }
