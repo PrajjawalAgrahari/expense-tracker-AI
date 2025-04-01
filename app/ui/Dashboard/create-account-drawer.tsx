@@ -26,7 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { createAccount } from "@/app/lib/dashboard";
 import { useEffect, useState } from "react";
-import { newAccountSubmission } from "@/app/lib/data-submission";
+import { postSubmission } from "@/app/lib/data-submission";
 import { Loader2 } from "lucide-react";
 
 export default function CreateAccountDrawer({
@@ -57,8 +57,8 @@ export default function CreateAccountDrawer({
     data: newAccount,
     loading: isAccountLoading,
     error,
-    submitAccount,
-  } = newAccountSubmission(createAccount);
+    fn: submitAccount,
+  } = postSubmission(createAccount);
 
   const onSubmit = async (data: AccountData) => {
     await submitAccount(data).then(() => {

@@ -1,16 +1,16 @@
 import { useState } from "react";
 import { AccountData } from "./type";
 
-export function newAccountSubmission(cb: Function) {
-    const [data, setData] = useState<AccountData | null>(null);
+export function postSubmission(cb: Function) {
+    const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string>("");
 
-    const submitAccount = async (newData: AccountData) => {
+    const fn = async (args: any) => {
         setLoading(true);
         setError("")
         try {
-            const response = await cb(newData);
+            const response = await cb(args);
             setData(response);
         } catch (error) {
             if (error instanceof Error) {
@@ -27,6 +27,6 @@ export function newAccountSubmission(cb: Function) {
         data,
         loading,
         error,
-        submitAccount,
+        fn,
     }
 }

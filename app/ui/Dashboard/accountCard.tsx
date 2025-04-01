@@ -5,20 +5,50 @@ import { Switch } from "@/components/ui/switch";
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
 import Link from "next/link";
 import { changeDefaultAccount } from "@/app/lib/dashboard";
+import { postSubmission } from "@/app/lib/data-submission";
+import { Toaster, toast } from "sonner";
+import { useEffect } from "react";
 
 export default function AccountCard({ ...account }) {
   let type: string = account.type;
   type = type[0] + type.slice(1).toLowerCase();
 
+  const {
+    data,
+    loading: isLoading,
+    error,
+    fn: changeDefault,
+  } = postSubmission(changeDefaultAccount);
+
+  async function handleDefaultChange() {
+    if (account.isDefault) {
+      toast.warning("You need at least 1 default account");
+      return;
+    }
+    await changeDefault(account.id);
+  }
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (error !== "") {
+        toast.error(error || "Something went wrong");
+      } else {
+        toast.success("Default account changed successfully");
+      }
+    }
+  }, [isLoading, error]);
+
   return (
     <Card className="py-0">
+      <Toaster />
       {/* <Link href={`/account/${account.id}`}> */}
       <CardContent className="p-6 flex flex-col gap-3 justify-center">
         <div className="text-[0.875rem] font-medium flex items-center justify-between">
           <span>{account.name}</span>
           <Switch
+            disabled={isLoading}
             checked={account.isDefault}
-            onClick={async () => changeDefaultAccount(account.id)}
+            onClick={handleDefaultChange}
           ></Switch>
         </div>
         <div className="flex flex-col mb-2">
