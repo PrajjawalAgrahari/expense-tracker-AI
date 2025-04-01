@@ -3,6 +3,7 @@
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 // In Next.js, floating-point numbers (floats) are not directly supported in certain cases, particularly when passing props from the server (e.g., getServerSideProps or getStaticProps) to the client. This happens because Next.js serializes props as JSON, and JSON does not support NaN or Infinity values, which are possible with floats in JavaScript.
 function serializeTransaction(obj: any) {
@@ -112,6 +113,46 @@ export async function getUserAccounts() {
     } catch (error) {
         if (error instanceof Error) {
             console.error("Error fetching accounts:", error?.message);
+            throw error
+        }
+    }
+}
+
+export async function changeDefaultAccount(id: string) {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        await prisma.account.updateMany({
+            where: {
+                userId: user.id,
+                isDefault: true,
+            },
+            data: {
+                isDefault: false,
+            },
+        })
+        await prisma.account.update({
+            where: {
+                id,
+            },
+            data: {
+                isDefault: true,
+            },
+        })
+        revalidatePath('/dashboard')
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error changing default account:", error?.message);
             throw error
         }
     }
