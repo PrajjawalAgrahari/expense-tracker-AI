@@ -3,7 +3,6 @@
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 // In Next.js, floating-point numbers (floats) are not directly supported in certain cases, particularly when passing props from the server (e.g., getServerSideProps or getStaticProps) to the client. This happens because Next.js serializes props as JSON, and JSON does not support NaN or Infinity values, which are possible with floats in JavaScript.
 function serializeTransaction(obj: any) {

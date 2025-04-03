@@ -28,27 +28,30 @@ export default function AccountCard({ ...account }) {
     await changeDefault(account.id);
   }
 
-  useEffect(() => {
-    if (!isLoading) {
-      if (error !== "") {
-        toast.error(error || "Something went wrong");
-      } else {
-        toast.success("Default account changed successfully");
-      }
-    }
-  }, [isLoading, error]);
+//   useEffect(() => {
+//     if (!isLoading) {
+//       if (error !== "") {
+//         toast.error(error || "Something went wrong");
+//       } else {
+//         toast.success("Default account changed successfully");
+//       }
+//     }
+//   }, [isLoading, error]);
 
   return (
     <Card className="py-0">
       <Toaster />
-      {/* <Link href={`/account/${account.id}`}> */}
+      <Link href={`/account/${account.id}`}>
       <CardContent className="p-6 flex flex-col gap-3 justify-center">
         <div className="text-[0.875rem] font-medium flex items-center justify-between">
           <span>{account.name}</span>
           <Switch
             disabled={isLoading}
             checked={account.isDefault}
-            onClick={handleDefaultChange}
+            onClick={async (e) => {
+                e.preventDefault();
+                await handleDefaultChange();
+            }}
           ></Switch>
         </div>
         <div className="flex flex-col mb-2">
@@ -64,7 +67,7 @@ export default function AccountCard({ ...account }) {
           </span>
         </div>
       </CardContent>
-      {/* </Link> */}
+      </Link>
     </Card>
   );
 }
