@@ -70,6 +70,7 @@ export async function seedTransactions() {
           status: "COMPLETED",
           userId: USER_ID,
           accountId: ACCOUNT_ID,
+          isRecurring: Math.random() < 0.1,
           createdAt: date,
           updatedAt: date,
         };
