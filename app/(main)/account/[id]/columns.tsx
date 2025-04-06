@@ -12,7 +12,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Clock, RefreshCcw } from "lucide-react";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, ArrowUpDown } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -45,6 +45,7 @@ export const columns: ColumnDef<TransactionColumns>[] = [
         }
         onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
         aria-label="Select all"
+        className="border-1 border-slate-700 hover:border-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-slate-500 focus-visible:ring-offset-slate-100"
       />
     ),
     cell: ({ row }) => (
@@ -52,6 +53,7 @@ export const columns: ColumnDef<TransactionColumns>[] = [
         checked={row.getIsSelected()}
         onCheckedChange={(value) => row.toggleSelected(!!value)}
         aria-label="Select row"
+        className="border-1 border-slate-700 hover:border-slate-400 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:ring-slate-500 focus-visible:ring-offset-slate-100"
       />
     ),
     enableSorting: false,
@@ -59,7 +61,17 @@ export const columns: ColumnDef<TransactionColumns>[] = [
   },
   {
     accessorKey: "date",
-    header: "Date",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Date
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
       const date = new Date(row.getValue("date"));
       return date.toLocaleDateString("en-US", {
@@ -96,7 +108,19 @@ export const columns: ColumnDef<TransactionColumns>[] = [
   },
   {
     accessorKey: "amount",
-    header: () => <div className="text-right">Amount</div>,
+    header: ({ column }) => {
+      return (
+        <div className="text-right">
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Amount
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const amount: Decimal = row.getValue("amount");
       const intAmount = parseInt(amount.toString(), 10);
