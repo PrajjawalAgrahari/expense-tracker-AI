@@ -32,6 +32,7 @@ export type TransactionColumns = {
   recurring: String;
   recurringInterval: String;
   nextRecurringDate: Date;
+  type: String;
 };
 
 export const columns: ColumnDef<TransactionColumns>[] = [
@@ -203,6 +204,20 @@ export const columns: ColumnDef<TransactionColumns>[] = [
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      );
+    },
+  },
+  {
+    accessorKey: "type",
+    header: ({ column }) => {
+      return <div className="hidden"></div>;
+    },
+    cell: ({ row }) => {
+      const type: String = row.getValue("type");
+      return (
+        <div className="hidden">
+          {type.charAt(0).toUpperCase() + type.slice(1).toLowerCase()}
+        </div>
       );
     },
   },

@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
-import { RecurringInterval } from "@/generated/prisma";
 
 export default async function AccountPage({
   params,
@@ -20,7 +19,8 @@ export default async function AccountPage({
     amount: transaction.type==='INCOME' ? transaction.amount : -transaction.amount,
     recurring: transaction.isRecurring ? "Yes" : "No",
     recurringInterval: transaction.recurringInterval,
-    nextRecurringDate: transaction.nextRecurringDate
+    nextRecurringDate: transaction.nextRecurringDate,
+    type: transaction.type,
   }));
 
   if (!account) {
