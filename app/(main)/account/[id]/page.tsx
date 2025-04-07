@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import React from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { Transaction } from "@/generated/prisma";
 
 export default async function AccountPage({
   params,
@@ -12,15 +13,17 @@ export default async function AccountPage({
   const { id } = await params;
 
   const account = await getAccountById(id);
-  const transactions = account.transactions.map((transaction: any) => ({
+  const transactions = account.transactions.map((transaction: Transaction) => ({
     date: transaction.date,
     description: transaction?.description,
     category: transaction.category,
-    amount: transaction.type==='INCOME' ? transaction.amount : -transaction.amount,
+    amount:
+      transaction.type === "INCOME" ? transaction.amount : -transaction.amount,
     recurring: transaction.isRecurring ? "Yes" : "No",
     recurringInterval: transaction.recurringInterval,
     nextRecurringDate: transaction.nextRecurringDate,
     type: transaction.type,
+    transactionId: transaction.id,
   }));
 
   if (!account) {

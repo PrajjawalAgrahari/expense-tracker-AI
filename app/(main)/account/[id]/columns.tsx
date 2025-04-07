@@ -19,20 +19,20 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { deleteOneRow } from "@/app/lib/account";
 
 export type TransactionColumns = {
+  transactionId: string;
   date: Date;
-  description: String;
-  category: String;
+  description: string;
+  category: string;
   amount: Decimal;
-  recurring: String;
-  recurringInterval: String;
+  recurring: string;
+  recurringInterval: string;
   nextRecurringDate: Date;
-  type: String;
+  type: string;
 };
 
 export const columns: ColumnDef<TransactionColumns>[] = [
@@ -199,7 +199,9 @@ export const columns: ColumnDef<TransactionColumns>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive">
+            <DropdownMenuItem className="text-destructive" onClick={async () => {
+              await deleteOneRow(row.getValue("transactionId"));
+            }}>
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -221,4 +223,14 @@ export const columns: ColumnDef<TransactionColumns>[] = [
       );
     },
   },
+  {
+    accessorKey: "transactionId",
+    header: ({ column }) => {
+      return <div className="hidden"></div>;
+    },
+    cell: ({ row }) => {
+      const id: String = row.getValue("transactionId");
+      return <div className="hidden">{id}</div>;
+    },
+  }
 ];

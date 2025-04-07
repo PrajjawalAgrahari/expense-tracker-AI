@@ -6,6 +6,7 @@ import {
   flexRender,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   useReactTable,
   ColumnFiltersState,
   getFilteredRowModel,
@@ -30,6 +31,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Trash, X } from "lucide-react";
+import { deleteTransactions } from "@/app/lib/account";
+import { postSubmission } from "@/app/lib/data-submission";
+import { BarLoader } from "react-spinners";
+import { DataTablePagination } from "./pagination";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -55,12 +60,20 @@ export function DataTable<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     state: {
       sorting,
       rowSelection,
       columnFilters,
     },
   });
+
+  const {
+    data: newData,
+    loading: isLoading,
+    error,
+    fn: deleteBulkTransactions,
+  } = postSubmission(deleteTransactions);
 
   const isFilterApplied =
     (table.getColumn("description")?.getFilterValue() as string) ||
@@ -71,8 +84,32 @@ export function DataTable<TData, TValue>({
     table.resetColumnFilters();
   }
 
+  async function deleteSelectedRows() {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete ${
+          table.getFilteredSelectedRowModel().rows.length
+        } transactions?`
+      )
+    ) {
+      return;
+    }
+
+    const selectedRows = table.getFilteredSelectedRowModel().rows;
+
+    const transactionIds = selectedRows.map((row) => {
+      return (row.original as any).transactionId;
+    });
+
+    await deleteBulkTransactions(transactionIds);
+    table.resetRowSelection();
+  }
+
   return (
     <>
+      {isLoading && (
+        <BarLoader className="mt-4" width={"100%"} color="#9333ea" />
+      )}
       <div className="flex items-center py-4">
         <Input
           placeholder="Search transactions..."
@@ -124,7 +161,11 @@ export function DataTable<TData, TValue>({
           </SelectContent>
         </Select>
         {table.getFilteredSelectedRowModel().rows.length > 0 && (
-          <Button variant="destructive" className="ml-4 cursor-pointer text-sm">
+          <Button
+            variant="destructive"
+            className="ml-4 cursor-pointer text-sm"
+            onClick={deleteSelectedRows}
+          >
             <Trash />
             Delete Selected ({table.getFilteredSelectedRowModel().rows.length})
           </Button>
@@ -189,6 +230,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
+      <DataTablePagination table={table} />
     </>
   );
 }
