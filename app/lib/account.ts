@@ -106,3 +106,41 @@ export async function deleteTransactions(ids: string[]) {
 export async function deleteOneRow(id: string) {
     await deleteTransactions([id])
 }
+
+export async function getDataForChart(id: string) {
+    const data = await prisma.transaction.groupBy({
+        where: {
+            accountId: id,
+        },
+        by: ['date', 'type'],
+        _sum: {
+            amount: true,
+        },
+        orderBy: {
+            date: "desc",
+        },
+    })
+    const formattedData = data.map((item: any) => ({
+        // I want date in the format Dec 20
+        date: item.date,
+        type: item.type,
+        amount: item._sum.amount?.toNumber(),
+    }));
+
+    const groupedData = formattedData.reduce((acc: any, item: any) => {
+        const date = item.date;
+        if (!acc[date]) {
+            acc[date] = { date, INCOME: 0, EXPENSE: 0 };
+        }
+        acc[date][item.type] += item.amount;
+        return acc;
+    }, {});
+
+    const groupedDataArray = Object.values(groupedData).map((item: any) => ({
+        date: item.date,
+        INCOME: item.INCOME,
+        EXPENSE: item.EXPENSE,
+    }));
+
+    return groupedDataArray;
+}

@@ -1,9 +1,11 @@
-import { getAccountById } from "@/app/lib/account";
+import { getAccountById, getDataForChart } from "@/app/lib/account";
 import { notFound } from "next/navigation";
-import React from "react";
+import React, { Suspense } from "react";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
 import { Transaction } from "@/generated/prisma";
+import { BarLoader } from "react-spinners";
+import TransactionChart from "./transaction-chart";
 
 export default async function AccountPage({
   params,
@@ -30,6 +32,8 @@ export default async function AccountPage({
     notFound();
   }
 
+  const data = await getDataForChart(id);
+
   return (
     <main className="flex flex-col gap-4 p-4">
       <div className="flex justify-between items-center">
@@ -45,7 +49,13 @@ export default async function AccountPage({
         </div>
       </div>
 
-      <DataTable columns={columns} data={transactions} />
+      <TransactionChart id={id} data={data} />
+
+      <Suspense
+        fallback={<BarLoader className="mt-4" width={"100%"} color="#9333ea" />}
+      >
+        <DataTable columns={columns} data={transactions} />
+      </Suspense>
     </main>
   );
 }
