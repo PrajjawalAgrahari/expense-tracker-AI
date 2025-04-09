@@ -3,11 +3,17 @@
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import { Budget } from "@/generated/prisma";
 
 // In Next.js, floating-point numbers (floats) are not directly supported in certain cases, particularly when passing props from the server (e.g., getServerSideProps or getStaticProps) to the client. This happens because Next.js serializes props as JSON, and JSON does not support NaN or Infinity values, which are possible with floats in JavaScript.
 function serializeTransaction(obj: any) {
     const serialized = { ...obj }
-    serialized.balance = obj.balance.toNumber();
+    if (serialized.balance) {
+        serialized.balance = obj.balance.toNumber();
+    }
+    if (serialized.amount) {
+        serialized.amount = obj.amount.toNumber();
+    }
     return serialized;
 }
 
@@ -152,6 +158,109 @@ export async function changeDefaultAccount(id: string) {
     } catch (error) {
         if (error instanceof Error) {
             console.error("Error changing default account:", error?.message);
+            throw error
+        }
+    }
+}
+
+export async function getBudget(): Promise<Budget | null | undefined> {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        const budget = await prisma.budget.findFirst({
+            where: {
+                userId: user.id,
+            },
+        })
+        if (!budget) {
+            return null;
+        }
+        return serializeTransaction(budget)
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error fetching budget:", error?.message);
+            throw error
+        }
+    }
+}
+
+export async function setBudget(data: any) {
+    try {
+        const amount = data.get("amount");
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        await prisma.budget.upsert({
+            where: {
+                userId: user.id,
+            },
+            update: {
+                amount: amount,
+            },
+            create: {
+                userId: user.id,
+                amount: amount,
+            }
+        })
+        revalidatePath('/dashboard');
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error setting budget:", error?.message);
+            throw error
+        }
+    }
+}
+
+export async function getExpenseOfThisMonth() {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        const transactions = await prisma.transaction.aggregate({
+            where: {
+                userId: user.id,
+                createdAt: {
+                    gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+                    lte: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+                },
+                type: "EXPENSE",
+            },
+            _sum: {
+                amount: true,
+            }
+        })
+        return transactions._sum.amount?.toNumber() ?? 0;
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error fetching expense:", error?.message);
             throw error
         }
     }
