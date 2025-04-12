@@ -3,6 +3,18 @@
 import { prisma } from "@/app/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
+import arcjet, { fixedWindow, request } from "@arcjet/next";
+
+const aj = arcjet({
+    key: process.env.ARCJET_KEY!,
+    rules: [
+        fixedWindow({
+            mode: "LIVE",
+            window: "1h",
+            max: 10,
+        }),
+    ],
+});
 
 function serializeTransaction(obj: any) {
     const serialized = { ...obj }
@@ -55,6 +67,14 @@ export async function createTransaction(data: any) {
         });
         if (!user) {
             throw new Error('User not found')
+        }
+        const req = await request();
+        const decision = await aj.protect(req);
+        if (decision.isDenied()) {
+            if(decision.reason.isRateLimit()) {
+                throw new Error("Rate limit exceeded. Please try again later.")
+            }
+            throw new Error("Request denied. Please try again later.")
         }
 
         let nextRecurringDate = null;
