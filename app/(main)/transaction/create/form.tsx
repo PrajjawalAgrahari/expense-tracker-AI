@@ -18,7 +18,6 @@ import { transactionSchema } from "@/app/lib/formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Account } from "@/generated/prisma";
 import { Calendar } from "@/components/ui/calendar";
-import { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -26,9 +25,10 @@ import {
 } from "@/components/ui/popover";
 import { useRouter } from "next/navigation";
 import CreateAccountDrawer from "@/app/ui/Dashboard/create-account-drawer";
+import Tesseract from "tesseract.js";
+import { extractTransactionData } from "@/app/lib/extract-transaction";
 
 export default function TransactionCreateForm(props: any) {
-  const [date, setDate] = useState<Date | undefined>(new Date());
   const router = useRouter();
   const accounts = props.accounts;
   let defaultAccountId: string = "";
@@ -44,6 +44,7 @@ export default function TransactionCreateForm(props: any) {
     handleSubmit,
     formState: { errors },
     setValue,
+    getValues,
     watch,
     reset,
   } = useForm<TransactionData>({
@@ -62,6 +63,7 @@ export default function TransactionCreateForm(props: any) {
 
   const type = watch("type");
   const isRecurring = watch("isRecurring");
+  const date = watch("date");
   const filteredCategories = defaultCategories.filter(
     (category) => category.type === type
   );
@@ -71,13 +73,46 @@ export default function TransactionCreateForm(props: any) {
     router.push(`/account/${data.account}`);
   }
 
+  async function extractTextFromImage(file: File): Promise<string> {
+    const dataUrl = await new Promise<string>((resolve) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.readAsDataURL(file);
+    });
+
+    const result = await Tesseract.recognize(dataUrl, "eng");
+    return result.data.text;
+  }
+
+  const handleUpload = async (e: any) => {
+    const file = e.target?.files[0];
+    if (!file) return;
+
+    const text = await extractTextFromImage(file);
+    const data = await extractTransactionData(text);
+
+    console.log(data);
+
+    if (data) {
+      setValue("type", data.type);
+      setValue("amount", data.amount);
+      setValue("category", data.category);
+      setValue("description", data.description ?? "");
+      setValue("date", new Date(data.date));
+    } else {
+      console.error("Failed to extract transaction data from receipt.");
+    }
+  };
+
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
       className="bg-white rounded-lg shadow-md p-6 max-w-2xl mx-auto"
     >
       <h2 className="text-2xl font-bold mb-6 text-gray-800">New Transaction</h2>
-
+      <Button className="cursor-pointer">
+        <input type="file" accept="image/*" onChange={handleUpload} />
+      </Button>
       <div className="space-y-6">
         {/* Type and Amount Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -94,6 +129,7 @@ export default function TransactionCreateForm(props: any) {
               onValueChange={(value: "EXPENSE" | "INCOME") =>
                 setValue("type", value)
               }
+              value={watch("type")}
             >
               <SelectTrigger id="type" className="w-full">
                 <SelectValue placeholder="Expense" />
@@ -181,17 +217,18 @@ export default function TransactionCreateForm(props: any) {
             <Select
               {...register("category")}
               onValueChange={(value: string) => setValue("category", value)}
+              defaultValue={getValues("category")}
+              value={watch("category")}
             >
               <SelectTrigger id="category" className="w-full">
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
               <SelectContent>
                 {filteredCategories?.map((category) => (
-                  <SelectItem key={category.id} value={category.id}>
+                  <SelectItem key={category.id} value={category.name}>
                     {category.name}
                   </SelectItem>
                 ))}
-                <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
             {errors.category && (
@@ -229,9 +266,8 @@ export default function TransactionCreateForm(props: any) {
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={date}
+                  selected={watch("date")}
                   onSelect={(selectedDate) => {
-                    setDate(selectedDate);
                     setValue("date", selectedDate as Date);
                   }}
                   className="rounded-md border"
@@ -278,7 +314,7 @@ export default function TransactionCreateForm(props: any) {
           </div>
           <Switch
             onCheckedChange={(checked: Boolean) => {
-              setValue("isRecurring", checked)
+              setValue("isRecurring", checked);
             }}
             id="isRecurring"
             name="isRecurring"

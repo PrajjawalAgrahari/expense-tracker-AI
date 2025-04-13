@@ -8,7 +8,7 @@ export type AccountData = {
 export type TransactionData = {
     type: "EXPENSE" | "INCOME",
     amount: string,
-    account: string,
+    account?: string,
     category: string,
     description?: string,
     date: Date,

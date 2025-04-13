@@ -4,6 +4,7 @@ import { prisma } from "@/app/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import arcjet, { fixedWindow, request } from "@arcjet/next";
+import Tesseract from "tesseract.js";
 
 const aj = arcjet({
     key: process.env.ARCJET_KEY!,
@@ -71,7 +72,7 @@ export async function createTransaction(data: any) {
         const req = await request();
         const decision = await aj.protect(req);
         if (decision.isDenied()) {
-            if(decision.reason.isRateLimit()) {
+            if (decision.reason.isRateLimit()) {
                 throw new Error("Rate limit exceeded. Please try again later.")
             }
             throw new Error("Request denied. Please try again later.")
