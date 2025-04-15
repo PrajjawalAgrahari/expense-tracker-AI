@@ -265,3 +265,36 @@ export async function getExpenseOfThisMonth() {
         }
     }
 }
+
+export async function getFiveTransactions(accountId: string) {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        const transactions = await prisma.transaction.findMany({
+            where: {
+                accountId,
+                userId: user.id,
+            },
+            orderBy: {
+                updatedAt: "desc",
+            },
+            take: 5,
+        })
+        return transactions.map((transaction) => serializeTransaction(transaction))
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error fetching transactions:", error?.message);
+            throw error
+        }
+    }
+}

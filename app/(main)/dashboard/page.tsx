@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { getBudget, getExpenseOfThisMonth, getUserAccounts } from "@/app/lib/dashboard";
 import AccountCard from "@/app/ui/Dashboard/accountCard";
 import BudgetCard from "@/app/ui/Dashboard/budget-card";
+import RecentTransactionsCard from "@/app/ui/Dashboard/recent-transaction-card";
 
 export default async function Dashboard() {
   const accounts = await getUserAccounts();
@@ -15,7 +16,7 @@ export default async function Dashboard() {
   return (
     <>
       <BudgetCard budget={budget} lastMonthExpend={lastMonthExpend}/>
-
+      <RecentTransactionsCard accounts={accounts}/>
       <CreateAccountDrawer>
         <Card className="py-12 px-24 hover:shadow-md transition-all duration-200 ease-in-out cursor-pointer">
           <CardContent className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
