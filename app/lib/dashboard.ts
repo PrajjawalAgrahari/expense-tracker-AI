@@ -298,3 +298,47 @@ export async function getFiveTransactions(accountId: string) {
         }
     }
 }
+
+export async function getExpenseOfThisMonthCategory() {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        const transactions = await prisma.transaction.groupBy({
+            by: ['category'],
+            where: {
+                userId: user.id,
+                createdAt: {
+                    gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
+                    lte: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0),
+                },
+                type: "EXPENSE",
+            },
+            _sum: {
+                amount: true,
+            },
+        })
+        const data = transactions.map((transaction) => {
+            return {
+                category: transaction.category,
+                amount: transaction._sum.amount?.toNumber() ?? 0,
+            }
+        })
+        return data
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error fetching expense:", error?.message);
+            throw error
+        }
+        return []
+    }
+}

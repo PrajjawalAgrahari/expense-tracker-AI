@@ -5,6 +5,8 @@ import { getBudget, getExpenseOfThisMonth, getUserAccounts } from "@/app/lib/das
 import AccountCard from "@/app/ui/Dashboard/accountCard";
 import BudgetCard from "@/app/ui/Dashboard/budget-card";
 import RecentTransactionsCard from "@/app/ui/Dashboard/recent-transaction-card";
+import SimplePieChart from "@/app/ui/Dashboard/pie-chart-card";
+import { getExpenseOfThisMonthCategory } from "@/app/lib/dashboard";
 
 export default async function Dashboard() {
   const accounts = await getUserAccounts();
@@ -13,10 +15,12 @@ export default async function Dashboard() {
   });
   const budget = await getBudget();
   const lastMonthExpend = await getExpenseOfThisMonth();
+  const chartData = await getExpenseOfThisMonthCategory();
   return (
     <>
       <BudgetCard budget={budget} lastMonthExpend={lastMonthExpend}/>
       <RecentTransactionsCard accounts={accounts}/>
+      <SimplePieChart data={chartData}/>
       <CreateAccountDrawer>
         <Card className="py-12 px-24 hover:shadow-md transition-all duration-200 ease-in-out cursor-pointer">
           <CardContent className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
