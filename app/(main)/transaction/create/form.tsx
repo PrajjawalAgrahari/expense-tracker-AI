@@ -1,6 +1,6 @@
 "use client";
 
-import { createTransaction } from "@/app/lib/transaction-create";
+import { createTransaction, updateTransaction } from "@/app/lib/transaction-create";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -31,6 +31,8 @@ import { extractTransactionData } from "@/app/lib/extract-transaction";
 export default function TransactionCreateForm(props: any) {
   const router = useRouter();
   const accounts = props.accounts;
+  const transaction = props.transaction;
+  const edit = (transaction !== null);
   let defaultAccountId: string = "";
   for (let i = 0; i < accounts.length; i++) {
     if (accounts[i].isDefault) {
@@ -49,7 +51,7 @@ export default function TransactionCreateForm(props: any) {
     reset,
   } = useForm<TransactionData>({
     resolver: zodResolver(transactionSchema),
-    defaultValues: {
+    defaultValues: !edit ? {
       type: "EXPENSE",
       amount: "",
       account: defaultAccountId,
@@ -58,6 +60,15 @@ export default function TransactionCreateForm(props: any) {
       description: "",
       isRecurring: false,
       recurringInterval: "DAILY",
+    } : {
+      type: transaction.type,
+      amount: transaction.amount.toString(),
+      account: transaction.accountId,
+      category: transaction.category,
+      date: new Date(transaction.date),
+      description: transaction.description,
+      isRecurring: transaction.isRecurring,
+      recurringInterval: transaction.recurringInterval,
     },
   });
 
@@ -69,7 +80,13 @@ export default function TransactionCreateForm(props: any) {
   );
 
   async function onSubmit(data: TransactionData) {
-    await createTransaction(data);
+    if(!edit) {
+      await createTransaction(data);
+    }
+    else {
+      data.id = transaction.id;
+      await updateTransaction(data);
+    }
     router.push(`/account/${data.account}`);
   }
 
@@ -313,11 +330,12 @@ export default function TransactionCreateForm(props: any) {
             </p>
           </div>
           <Switch
-            onCheckedChange={(checked: Boolean) => {
+            onCheckedChange={(checked: boolean) => {
               setValue("isRecurring", checked);
             }}
             id="isRecurring"
             name="isRecurring"
+            checked={isRecurring ? true : false}
           />
         </div>
 
@@ -353,7 +371,7 @@ export default function TransactionCreateForm(props: any) {
             type="submit"
             className="px-6 bg-blue-600 hover:bg-blue-700 cursor-pointer"
           >
-            Create Transaction
+            {edit ? "Update Transaction" : "Add Transaction"}
           </Button>
         </div>
       </div>

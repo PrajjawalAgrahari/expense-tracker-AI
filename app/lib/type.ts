@@ -6,12 +6,13 @@ export type AccountData = {
 }
 
 export type TransactionData = {
+    id?: string,
     type: "EXPENSE" | "INCOME",
     amount: string,
     account?: string,
     category: string,
     description?: string,
     date: Date,
-    isRecurring: Boolean,
+    isRecurring: boolean,
     recurringInterval?: "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY",
 }

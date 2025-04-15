@@ -22,6 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteOneRow } from "@/app/lib/account";
+import {useRouter} from "next/navigation";
 
 export type TransactionColumns = {
   transactionId: string;
@@ -189,6 +190,7 @@ export const columns: ColumnDef<TransactionColumns>[] = [
   {
     id: "actions",
     cell: ({ row }) => {
+      const Router = useRouter();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -198,7 +200,9 @@ export const columns: ColumnDef<TransactionColumns>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => {
+              Router.push(`/transaction/create?edit=${row.getValue("transactionId")}`);
+            }}>Edit</DropdownMenuItem>
             <DropdownMenuItem className="text-destructive" onClick={async () => {
               await deleteOneRow(row.getValue("transactionId"));
             }}>

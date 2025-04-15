@@ -4,7 +4,6 @@ import { prisma } from "@/app/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import arcjet, { fixedWindow, request } from "@arcjet/next";
-import Tesseract from "tesseract.js";
 
 const aj = arcjet({
     key: process.env.ARCJET_KEY!,
@@ -112,6 +111,111 @@ export async function createTransaction(data: any) {
         revalidatePath(`account/${data.account}`)
         revalidatePath('/dashboard')
     } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error?.message)
+        }
+    }
+}
+
+export async function getTransactionById(id: string) {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        const transaction = await prisma.transaction.findUnique({
+            where: {
+                id,
+            },
+        })
+        return serializeTransaction(transaction);
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error?.message)
+        }
+    }
+}
+
+export async function updateTransaction(data: any) {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        // const req = await request();
+        // const decision = await aj.protect(req);
+        // if (decision.isDenied()) {
+        //     if (decision.reason.isRateLimit()) {
+        //         throw new Error("Rate limit exceeded. Please try again later.")
+        //     }
+        //     throw new Error("Request denied. Please try again later.")
+        // }
+
+        const prevData = await prisma.transaction.findUnique({
+            where: {
+                id: data.id,
+            },
+        });
+
+        if (!prevData) {
+            return
+        }
+
+        let nextRecurringDate = null;
+        if (data.isRecurring) {
+            nextRecurringDate = computeNextRecurringDate(data.recurringInterval, prevData.lastProcessed || new Date(data.date));
+        }
+
+        let change = (prevData.type === 'EXPENSE') ? parseFloat(prevData.amount.toString()) : -parseFloat(prevData.amount.toString());
+        change += (data.type === 'EXPENSE') ? -parseFloat(data.amount) : parseFloat(data.amount);
+
+        await prisma.$transaction([
+            prisma.transaction.update({
+                where: {
+                    id: data.id,
+                },
+                data: {
+                    type: data.type,
+                    amount: parseFloat(data.amount),
+                    description: data.description,
+                    date: new Date(data.date),
+                    category: data.category,
+                    accountId: data.account,
+                    isRecurring: data.isRecurring,
+                    recurringInterval: data.recurringInterval,
+                    nextRecurringDate: nextRecurringDate,
+                },
+            }),
+            prisma.account.update({
+                where: {
+                    id: data.account,
+                },
+                data: {
+                    balance: {
+                        increment: change,
+                    },
+                },
+            })
+        ]
+        )
+    }
+    catch (error) {
         if (error instanceof Error) {
             throw new Error(error?.message)
         }
