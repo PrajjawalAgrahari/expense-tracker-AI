@@ -1,3 +1,4 @@
+import { generateMonthlyInsights } from "@/app/lib/generate-monthly-insights";
 import { inngest } from "./client";
 import { prisma } from "@/app/lib/prisma";
 import { sendEmail, sendEmailMonthlyReport } from "@/app/lib/send-email";
@@ -159,11 +160,11 @@ export const sendMonthlyReport = inngest.createFunction(
                 const lastMonth = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
                 const stats = await getMonthlyStats(user.id, lastMonth);
                 const month = lastMonth.toLocaleString("default", { month: "long" });
-                
+                const insights = await generateMonthlyInsights(month, stats);
                 await sendEmailMonthlyReport(user.name, {
                     stats,
                     month,
-                    insights: "Your monthly insights will be here.",
+                    insights,
                 })
             })
         }
@@ -181,7 +182,7 @@ async function getMonthlyStats(userId: string, date: Date) {
         },
     })
 
-    return transactions.reduce((acc : any, transaction : any) => {
+    return transactions.reduce((acc: any, transaction: any) => {
         const category = transaction.category;
         acc.totalTransactions += 1;
         if (transaction.type === "INCOME") {

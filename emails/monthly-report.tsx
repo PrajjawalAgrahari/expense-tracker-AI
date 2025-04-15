@@ -55,9 +55,14 @@ export function Email({ name, stats, month, insights }: any) {
             </Section>
             <Section>
               <Heading>Welth Insights</Heading>
-              <Text>
-                {insights}
-              </Text>
+              {Object.entries(insights).map(([index, insight]) => {
+                const typedInsight = insight as string;
+                return (
+                  <div key={index} className="p-4 rounded-lg shadow bg-white">
+                    <p className="text-sm text-gray-700">{typedInsight}</p>
+                  </div>
+                );
+              })}
             </Section>
             <Text>
               Thank you for using expensify. Keep tracking your expenses.
