@@ -45,7 +45,7 @@ export function Email({
               </div>
               <div className="bg-white w-[100%]">
                 <Text>Remaining</Text>
-                <Text>${remaining.toFixed(2)}</Text>
+                <Text>${remaining?.toFixed(2)}</Text>
               </div>
             </Section>
           </Container>

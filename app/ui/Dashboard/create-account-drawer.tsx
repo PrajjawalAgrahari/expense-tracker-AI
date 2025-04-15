@@ -136,7 +136,7 @@ export default function CreateAccountDrawer({
                 <Input
                   type="number"
                   placeholder="0.00"
-                  step={0.1}
+                  step={0.01}
                   id="balance"
                   {...register("balance")}
                 ></Input>

@@ -1,6 +1,6 @@
 import { inngest } from "./client";
 import { prisma } from "@/app/lib/prisma";
-import { sendEmail } from "@/app/lib/send-email";
+import { sendEmail, sendEmailMonthlyReport } from "@/app/lib/send-email";
 
 export const triggerRecurringTransaction = inngest.createFunction(
     { id: "Trigger-Recurring-Transaction" },
@@ -139,6 +139,64 @@ export const sendBudgetAlerts = inngest.createFunction(
 const isNewMonth = (lastAlertSent: Date) => {
     const currentDate = new Date();
     return lastAlertSent.getMonth() !== currentDate.getMonth() || lastAlertSent.getFullYear() !== currentDate.getFullYear();
+}
+
+export const sendMonthlyReport = inngest.createFunction(
+    {
+        id: "send-monthly-report",
+        name: "Send Monthly Report",
+    },
+    {
+        cron: "0 0 1 * *",
+    },
+    async ({ step }) => {
+        const users = await step.run("get-users", async () => {
+            return await prisma.user.findMany();
+        });
+
+        for (const user of users) {
+            await step.run(`send-monthly-report-${user.id}`, async () => {
+                const lastMonth = new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1);
+                const stats = await getMonthlyStats(user.id, lastMonth);
+                const month = lastMonth.toLocaleString("default", { month: "long" });
+                
+                await sendEmailMonthlyReport(user.name, {
+                    stats,
+                    month,
+                    insights: "Your monthly insights will be here.",
+                })
+            })
+        }
+    }
+)
+
+async function getMonthlyStats(userId: string, date: Date) {
+    const transactions = await prisma.transaction.findMany({
+        where: {
+            userId: userId,
+            date: {
+                gte: new Date(date.getFullYear(), date.getMonth(), 1),
+                lte: new Date(date.getFullYear(), date.getMonth() + 1, 0),
+            },
+        },
+    })
+
+    return transactions.reduce((acc : any, transaction : any) => {
+        const category = transaction.category;
+        acc.totalTransactions += 1;
+        if (transaction.type === "INCOME") {
+            acc.totalIncome += parseFloat(transaction.amount);
+        } else {
+            acc.categories[category] = (acc.categories[category] || 0) + parseFloat(transaction.amount);
+            acc.totalExpense += parseFloat(transaction.amount);
+        }
+        return acc;
+    }, {
+        totalIncome: 0,
+        totalExpense: 0,
+        totalTransactions: 0,
+        categories: {},
+    })
 }
 
 function computeNextRecurringDate(recurringInterval: string, date: Date) {
