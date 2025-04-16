@@ -41,7 +41,7 @@ function getRandomCategory(type: "INCOME" | "EXPENSE") {
   return { category: category.name, amount };
 }
 
-export async function seedTransactions() {
+async function seedTransactions() {
   try {
     // Generate 90 days of transactions
     const transactions: any = [];
