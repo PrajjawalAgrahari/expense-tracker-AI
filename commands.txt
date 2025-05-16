@@ -1,0 +1,9 @@
+# In one terminal (start Rasa NLU server)
+rasa run --enable-api --cors "*"
+
+rasa train
+
+# In another terminal (start Rasa actions server)
+rasa run actions
+
+rasa run --model models\20250420-145813-visible-fitting.tar.gz --cors "*" --debug
