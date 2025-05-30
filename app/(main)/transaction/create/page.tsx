@@ -16,7 +16,17 @@ export default async function CreateTransaction({
 
   return (
     <main className="flex flex-col gap-4 items-center py-10">
-      <h1>{editId ? "Edit Transaction" : "Add Transaction"}</h1>
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900 mb-2">
+          {editId ? "Edit Transaction" : "Add Transactions"}
+        </h1>
+        <p className="text-gray-600 text-lg">
+          {editId 
+            ? "Update your transaction details below" 
+            : "Add one or more transactions to track your expenses and income"
+          }
+        </p>
+      </div>
       <TransactionCreateForm accounts={accounts} transaction={transaction} />
     </main>
   );
