@@ -30,9 +30,11 @@ import { useRouter } from "next/navigation";
 import CreateAccountDrawer from "@/app/ui/Dashboard/create-account-drawer";
 import Tesseract from "tesseract.js";
 import { extractTransactionData } from "@/app/lib/extract-transaction";
+import { categorizeTransactionDescription } from "@/app/lib/auto-categorize";
+import { useDebounce } from "@/hooks/debounce";
 import { z } from "zod";
 import { useState } from "react";
-import { Trash2, Copy, PlusCircle } from "lucide-react";
+import { Trash2, Copy, PlusCircle, Sparkles, Loader2 } from "lucide-react";
 import get from "lodash/get"; // Add this import for safe nested property access
 
 const bulkTransactionSchema = z.object({
@@ -47,6 +49,8 @@ export default function TransactionCreateForm(props: any) {
   const transaction = props.transaction;
   const edit = transaction !== null;
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categorizingStates, setCategorizingStates] = useState<Record<number, boolean>>({});
+  const [autoSuggestions, setAutoSuggestions] = useState<Record<number, string>>({});
   
   let defaultAccountId: string = "";
   for (let i = 0; i < accounts.length; i++) {
@@ -106,6 +110,46 @@ export default function TransactionCreateForm(props: any) {
   const getErrorMessage = (index: number, field: keyof TransactionData): string | undefined => {
     return get(errors, `transactions.${index}.${field}.message`) as string | undefined;
   };
+
+  // Auto-categorization logic
+  const performAutoCategorization = async (index: number, description: string, type: "EXPENSE" | "INCOME") => {
+    if (!description || description.trim().length < 3) return;
+
+    setCategorizingStates(prev => ({ ...prev, [index]: true }));
+    
+    try {
+      const suggestedCategory = await categorizeTransactionDescription(description, type);
+      
+      if (suggestedCategory) {
+        // Check if user hasn't manually selected a category yet
+        const currentCategory = getValues(`transactions.${index}.category`);
+        if (!currentCategory || currentCategory === autoSuggestions[index]) {
+          setValue(`transactions.${index}.category`, suggestedCategory);
+          setAutoSuggestions(prev => ({ ...prev, [index]: suggestedCategory }));
+        }
+      }
+    } catch (error) {
+      console.error('Auto-categorization error:', error);
+    } finally {
+      setCategorizingStates(prev => ({ ...prev, [index]: false }));
+    }
+  };
+
+  fields.forEach((_, index) => {
+    const description = watch(`transactions.${index}.description`);
+    const type = watch(`transactions.${index}.type`);
+    
+    useDebounce(
+      () => {
+        if (description && type) {
+          performAutoCategorization(index, description, type);
+        }
+      },
+      1000, // 1 second delay
+      [description, type, index]
+    );
+  });
+
 
   async function onSubmit(data: BulkTransactionData) {
     setIsSubmitting(true);
@@ -177,6 +221,12 @@ export default function TransactionCreateForm(props: any) {
     }, 0);
   };
 
+  const handleManualCategoryChange = (index: number, value: string) => {
+    setValue(`transactions.${index}.category`, value);
+    // Clear auto-suggestion when user manually selects
+    setAutoSuggestions(prev => ({ ...prev, [index]: '' }));
+  };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <div className="space-y-6">
@@ -184,6 +234,9 @@ export default function TransactionCreateForm(props: any) {
           const type = watch(`transactions.${index}.type`);
           const isRecurring = watch(`transactions.${index}.isRecurring`);
           const date = watch(`transactions.${index}.date`);
+          const currentCategory = watch(`transactions.${index}.category`);
+          const isAutoSuggested = autoSuggestions[index] === currentCategory;
+          const isCategorizing = categorizingStates[index];
           const filteredCategories = defaultCategories.filter(
             (category) => category.type === type
           );
@@ -221,7 +274,11 @@ export default function TransactionCreateForm(props: any) {
                     Transaction Type
                   </label>
                   <Select
-                    onValueChange={(value) => setValue(`transactions.${index}.type`, value as "EXPENSE" | "INCOME")}
+                    onValueChange={(value) => {
+                      setValue(`transactions.${index}.type`, value as "EXPENSE" | "INCOME")
+                      setValue(`transactions.${index}.category`, ""); 
+                      setAutoSuggestions(prev => ({ ...prev, [index]: '' })); 
+                    }}
                     value={watch(`transactions.${index}.type`)}
                   >
                     <SelectTrigger>
@@ -284,11 +341,22 @@ export default function TransactionCreateForm(props: any) {
                 <div className="space-y-2">
                   <label htmlFor={`transactions.${index}.category`} className="block text-sm font-medium">
                     Category
+                    {isCategorizing && (
+                      <span className="ml-2 inline-flex items-center text-xs text-blue-600">
+                        <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                        Auto-categorizing...
+                      </span>
+                    )}
+                    {isAutoSuggested && !isCategorizing && (
+                      <span className="ml-2 inline-flex items-center text-xs text-green-600">
+                        <Sparkles className="h-3 w-3 mr-1" />
+                        AI suggested
+                      </span>
+                    )}
                   </label>
                   <Select
-                    onValueChange={(value) => setValue(`transactions.${index}.category`, value)}
-                    defaultValue={getValues(`transactions.${index}.category`)}
-                    value={watch(`transactions.${index}.category`)}
+                    onValueChange={(value) => handleManualCategoryChange(index, value)}
+                    value={currentCategory}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select Category" />
@@ -342,6 +410,9 @@ export default function TransactionCreateForm(props: any) {
                 <div className="space-y-2">
                   <label htmlFor={`transactions.${index}.description`} className="block text-sm font-medium">
                     Description
+                    <span className="text-xs text-gray-500 ml-2">
+                      (Auto-categorization will trigger as you type)
+                    </span>
                   </label>
                   <Input
                     {...register(`transactions.${index}.description`)}

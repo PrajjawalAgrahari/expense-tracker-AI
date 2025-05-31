@@ -6,8 +6,8 @@ import { TransactionData } from './type';
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
 
 export async function extractTransactionData(receiptText: string | undefined): Promise<TransactionData | null> {
-    if (!receiptText) return null;
-    const prompt = `
+  if (!receiptText) return null;
+  const prompt = `
 You are a smart financial assistant. Parse the following receipt text and convert it into a JSON object with this structure:
 {
   type: "EXPENSE" or "INCOME",
@@ -25,24 +25,24 @@ ${receiptText}
 Return only the JSON.
 `;
 
-    try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const chat = model.startChat();
-        const result = await chat.sendMessage(prompt);
-        const response = result.response;
+  try {
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const chat = model.startChat();
+    const result = await chat.sendMessage(prompt);
+    const response = result.response;
 
-        const content = response.text();
-        // Remove code block formatting like ```json ... ```
-        const cleanContent = content.trim().replace(/^```json|```$/g, '').trim();
-        const parsed = JSON.parse(cleanContent);
-        return {
-            ...parsed,
-            // date: new Date(parsed.date),
-        };
-    } catch (err) {
-        console.error('Failed to parse response:', err);
-        return null;
-    }
+    const content = response.text();
+    // Remove code block formatting like ```json ... ```
+    const cleanContent = content.trim().replace(/^```json|```$/g, '').trim();
+    const parsed = JSON.parse(cleanContent);
+    return {
+      ...parsed,
+      // date: new Date(parsed.date),
+    };
+  } catch (err) {
+    console.error('Failed to parse response:', err);
+    return null;
+  }
 }
 
 export async function extractExpenseFromMessage(message: string): Promise<any> {
@@ -70,9 +70,9 @@ export async function extractExpenseFromMessage(message: string): Promise<any> {
 
     // Clean up the response to ensure it's valid JSON
     const cleanContent = content.trim().replace(/^```json|```$/g, '').trim();
-    
+
     const parsed = JSON.parse(cleanContent);
-    
+
     // Add default values and type
     return {
       type: "EXPENSE",

@@ -1,5 +1,6 @@
 version: "3.1"
 
+# These define the user's intentions that RASA can recognize:
 intents:
   - greet
   - goodbye
@@ -10,18 +11,20 @@ intents:
   - bot_challenge
   - add_expense
 
+# These are the specific pieces of information RASA will extract from user messages:
 entities:
   - amount
   - category
   - date
   - description
 
+# Slots store the extracted entity values during conversation:
 slots:
   amount:
     type: float
     influence_conversation: false
     mappings:
-      - type: custom
+      - type: # custom mappings: type: custom indicates you're using custom code to extract and set these values
 
   category:
     type: text
@@ -47,6 +50,7 @@ slots:
     mappings:
       - type: custom
 
+# These are predefined text responses the bot can use:
 responses:
   utter_greet:
     - text: "Hello! I'm your expense tracking assistant. How can I help you today?"

@@ -1,5 +1,17 @@
 version: "3.1"
 
+# User Message Processing:
+
+# User sends a message → nlu.yml helps identify the intent and entities
+# Response Determination:
+
+# RASA checks rules.yml first to see if any absolute rules apply
+# If no matching rule, RASA uses stories.yml to determine the appropriate response based on conversation context
+# Action Execution:
+
+# The bot executes actions defined in domain.yml (responses or custom actions)
+# For the expense tracker, the main custom action is action_add_expense
+
 rules:
 
 - rule: Say goodbye anytime the user says goodbye
