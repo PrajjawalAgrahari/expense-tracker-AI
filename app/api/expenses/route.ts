@@ -2,39 +2,38 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { extractExpenseFromMessage } from '@/app/lib/extract-transaction';
+import { createTransaction } from '@/app/lib/transaction-create';
+import { getDefaultAccountId } from '@/app/lib/account';
 
 export async function POST(request: NextRequest) {
   try {
     const data = await request.json();
-    console.log('Received data:', data);
 
     // Check if this is a message that needs entity extraction
     if (data.message) {
       console.log('Processing message for entity extraction:', data.message);
-      
+
       // Extract entities from the message using Gemini
       const extractedData = await extractExpenseFromMessage(data.message);
-      
+
       if (!extractedData) {
         return NextResponse.json(
           { error: 'Could not extract expense information from message' },
           { status: 400 }
         );
       }
-      
+
+      const accountId = await getDefaultAccountId();
+
       // Merge extracted data with any other data sent
       const processedData = {
         ...data,
         ...extractedData,
+        account: accountId,
       };
 
-      // console.log(processedData)
-      
-      console.log('Processed expense data:', processedData);
-      
-      // Here you would save to your database
-      // const savedExpense = await db.expenses.create({ data: processedData });
-      
+      await createTransaction(processedData);
+
       return NextResponse.json(
         { message: 'Expense data processed and saved', data: processedData },
         {
@@ -47,7 +46,7 @@ export async function POST(request: NextRequest) {
         }
       );
     }
-    
+
     // If no message field, process as regular expense data
     return NextResponse.json(
       { message: 'Expense data received', data },

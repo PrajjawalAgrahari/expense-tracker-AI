@@ -144,3 +144,37 @@ export async function getDataForChart(id: string) {
 
     return groupedDataArray;
 }
+
+export async function getDefaultAccountId() {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error("User not authenticated");
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const account = await prisma.account.findFirst({
+            where: {
+                userId: user.id,
+                isDefault: true,
+            },
+        });
+
+        if (!account) {
+            return null;
+        }
+
+        return account.id;
+    } catch (error) {
+        if (error instanceof Error) {
+            throw new Error(error?.message);
+        }
+    }
+}

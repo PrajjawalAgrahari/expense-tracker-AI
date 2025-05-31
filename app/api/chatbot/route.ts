@@ -3,7 +3,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import axios from 'axios';
 import { auth } from '@clerk/nextjs/server';
-import { metadata } from '@/app/layout';
 
 const RASA_SERVER_URL = 'http://localhost:5005';
 
@@ -11,13 +10,12 @@ export async function POST(req: NextRequest) {
   const { message } = await req.json();
   const authHeader = req.headers.get('authorization');
   const { userId } = await auth();
+
+
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
   try {
-    // console.log(req)
-    console.log('Authorization Header:', authHeader)
-    // console.log(message, userId);
 
     if (!message) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
@@ -34,7 +32,6 @@ export async function POST(req: NextRequest) {
         'Content-Type': 'application/json',
       }
     });
-    console.log('Rasa response:', rasaResponse.data);
 
     const botMessages = rasaResponse.data.map((msg: any) => msg.text).filter(Boolean);
     const reply = botMessages.length > 0 ? botMessages.join('\n') : "I'm not sure how to respond to that.";

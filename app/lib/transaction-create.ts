@@ -77,6 +77,8 @@ export async function createTransaction(data: any) {
             throw new Error("Request denied. Please try again later.")
         }
 
+        console.log(user.id)
+
         let nextRecurringDate = null;
         if (data.isRecurring) {
             nextRecurringDate = computeNextRecurringDate(data.recurringInterval, new Date(data.date));

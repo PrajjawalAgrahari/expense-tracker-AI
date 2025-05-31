@@ -48,13 +48,16 @@ Return only the JSON.
 export async function extractExpenseFromMessage(message: string): Promise<any> {
   if (!message) return null;
 
+  const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
   const prompt = `
   You are a financial assistant that extracts expense information from user messages.
+  Today's date is ${today}.
   
   Extract the following information from this message:
   - amount: numeric value (required)
   - category: one of [housing, transportation, groceries, utilities, entertainment, food, shopping, healthcare, education, personal, travel, insurance, gifts, bills, other-expense] (required)
-  - date: in YYYY-MM-DD format (use today's date if not specified)
+  - date: in YYYY-MM-DD format (use today's date ${today} if not specified)
   - description: a brief description (optional)
   
   Message: "${message}"
@@ -79,7 +82,7 @@ export async function extractExpenseFromMessage(message: string): Promise<any> {
       amount: parsed.amount?.toString() || null,
       category: parsed.category || null,
       description: parsed.description || "",
-      date: parsed.date || new Date().toISOString().split('T')[0],
+      date: parsed.date || today, // Use today's date as fallback
     };
   } catch (err) {
     console.error('Failed to extract expense from message:', err);

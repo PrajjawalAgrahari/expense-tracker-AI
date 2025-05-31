@@ -17,6 +17,21 @@ NEXTJS_API_URL = os.getenv('NEXTJS_API_URL', 'http://localhost:3000/api')
 class ActionAddExpense(Action):
     def name(self) -> Text:
         return "action_add_expense"
+    
+    def format_response_message(self, amount, category, date, description=None):
+            formatted_category = category.lower().replace('-', ' ').title()
+            
+            try:
+                formatted_date = datetime.datetime.strptime(date, '%Y-%m-%d').strftime('%b %d, %Y')
+            except:
+                formatted_date = date
+            
+            response_message = f"✅ Expense added: ${amount:.2f} for {formatted_category} on {formatted_date}"
+            
+            if description and description.strip():
+                response_message += f" ({description.strip()})"
+
+            return response_message
 
     def run(self, dispatcher: CollectingDispatcher,
             tracker: Tracker,
@@ -62,10 +77,7 @@ class ActionAddExpense(Action):
                 f"{NEXTJS_API_URL}/expenses",
                 json=expense_data,
                 headers=headers
-            )
-            print("Response data:", response)
-            
-            print("Response status:", response.status_code)
+            ) 
             
             if response.status_code in [200, 201]:
                 # Success - expense processed by the API
@@ -80,9 +92,7 @@ class ActionAddExpense(Action):
                     description = data.get("description", "")
 
                     
-                    response_message = f"Added ${amount:.2f} for {category} on {date}"
-                    if description:
-                        response_message += f" ({description})"
+                    response_message = self.format_response_message(amount, category, date, description)
                     
                     dispatcher.utter_message(text=response_message)
                 else:
@@ -107,87 +117,3 @@ class ActionAddExpense(Action):
             dispatcher.utter_message(text=f"Sorry, I couldn't save your expense: {str(e)}")
         
         return []
-
-
-
-# class ActionGetExpenses(Action):
-#     def name(self) -> Text:
-#         return "action_get_expenses"
-
-#     def run(self, dispatcher: CollectingDispatcher,
-#             tracker: Tracker,
-#             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
-        
-#         # Extract date filters if any
-#         date_entity = next((e["value"] for e in tracker.latest_message["entities"] 
-#                       if e["entity"] == "date"), None)
-#         category = next((e["value"] for e in tracker.latest_message["entities"] 
-#                       if e["entity"] == "category"), None)
-                      
-#         # Prepare query parameters
-#         params = {}
-#         if date_entity:
-#             if date_entity == "today":
-#                 params["date"] = datetime.datetime.now().strftime('%Y-%m-%d')
-#             elif date_entity == "yesterday":
-#                 params["date"] = (datetime.datetime.now() - datetime.timedelta(days=1)).strftime('%Y-%m-%d')
-#             else:
-#                 params["date"] = date_entity
-                
-#         if category:
-#             params["category"] = category
-            
-#         # Send request to NextJS API endpoint
-#         try:
-#             response = requests.get(
-#                 f"{NEXTJS_API_URL}/expenses",
-#                 params=params
-#             )
-            
-#             if response.status_code == 200:
-#                 expenses = response.json()
-                
-#                 if not expenses or len(expenses) == 0:
-#                     filter_msg = ""
-#                     if category:
-#                         filter_msg += f" in {category} category"
-#                     if date_entity:
-#                         filter_msg += f" on {date_entity}"
-                    
-#                     dispatcher.utter_message(text=f"I couldn't find any expenses{filter_msg}.")
-#                     return []
-                    
-#                 # Format expenses for display
-#                 expense_list = []
-#                 total = 0
-                
-#                 for exp in expenses:
-#                     date_str = exp.get('date', '').split('T')[0]  # Extract date part
-#                     amount = exp.get('amount', 0)
-#                     total += amount
-                    
-#                     expense_text = f"${amount:.2f} for {exp.get('category', 'unknown')}"
-#                     if exp.get('description'):
-#                         expense_text += f" ({exp.get('description')})"
-#                     expense_text += f" on {date_str}"
-                    
-#                     expense_list.append(expense_text)
-                
-#                 # Build response message
-#                 filter_text = ""
-#                 if category:
-#                     filter_text += f" in {category}"
-#                 if date_entity:
-#                     filter_text += f" on {date_entity}"
-                
-#                 header = f"Found {len(expenses)} expenses{filter_text} totaling ${total:.2f}:"
-#                 expenses_text = "\n• " + "\n• ".join(expense_list)
-                
-#                 dispatcher.utter_message(text=f"{header}\n{expenses_text}")
-#             else:
-#                 dispatcher.utter_message(text=f"Sorry, I couldn't retrieve your expenses. API returned status {response.status_code}.")
-                
-#         except Exception as e:
-#             dispatcher.utter_message(text=f"Sorry, I couldn't retrieve your expenses: {str(e)}")
-            
-#         return []
