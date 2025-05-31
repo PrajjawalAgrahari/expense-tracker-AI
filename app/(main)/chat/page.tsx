@@ -25,7 +25,7 @@ export default function ChatInterface(): JSX.Element {
   ]);
   const [input, setInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  
+
   // Fix the ref typing issue
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { getToken } = useAuth();
@@ -47,11 +47,14 @@ export default function ChatInterface(): JSX.Element {
 
       // Add user message to chat
       const userMessage = input;
-      setMessages((prev) => [...prev, { 
-        text: userMessage, 
-        isBot: false, 
-        timestamp: new Date() 
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: userMessage,
+          isBot: false,
+          timestamp: new Date(),
+        },
+      ]);
       setInput("");
       setIsLoading(true);
 
@@ -61,7 +64,7 @@ export default function ChatInterface(): JSX.Element {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ message: userMessage }),
       });
@@ -73,11 +76,14 @@ export default function ChatInterface(): JSX.Element {
       const data: ApiResponse = await response.json();
 
       // Add bot response to chat
-      setMessages((prev) => [...prev, { 
-        text: data.reply, 
-        isBot: true, 
-        timestamp: new Date() 
-      }]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          text: data.reply,
+          isBot: true,
+          timestamp: new Date(),
+        },
+      ]);
     } catch (error) {
       console.error("Error sending message:", error);
       setMessages((prev) => [
@@ -94,14 +100,14 @@ export default function ChatInterface(): JSX.Element {
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
     }
   };
 
   const formatTime = (date: Date): string => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
   };
 
   return (
@@ -136,16 +142,20 @@ export default function ChatInterface(): JSX.Element {
 
               {/* Message Bubble */}
               <div className="flex flex-col">
-                <div className={`p-3 rounded-2xl shadow-sm ${
-                  msg.isBot
-                    ? "bg-white text-gray-800 rounded-bl-md"
-                    : "bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-br-md"
-                }`}>
+                <div
+                  className={`p-3 rounded-2xl shadow-sm ${
+                    msg.isBot
+                      ? "bg-white text-gray-800 rounded-bl-md"
+                      : "bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-br-md"
+                  }`}
+                >
                   <p className="text-sm leading-relaxed">{msg.text}</p>
                 </div>
-                <p className={`text-xs text-gray-500 mt-1 ${
-                  msg.isBot ? "text-left" : "text-right"
-                }`}>
+                <p
+                  className={`text-xs text-gray-500 mt-1 ${
+                    msg.isBot ? "text-left" : "text-right"
+                  }`}
+                >
                   {formatTime(msg.timestamp)}
                 </p>
               </div>
@@ -170,11 +180,11 @@ export default function ChatInterface(): JSX.Element {
               <div className="bg-white p-3 rounded-2xl rounded-bl-md shadow-sm">
                 <div className="flex space-x-1">
                   <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
-                  <div 
+                  <div
                     className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
                     style={{ animationDelay: "0.2s" }}
                   ></div>
-                  <div 
+                  <div
                     className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
                     style={{ animationDelay: "0.4s" }}
                   ></div>
