@@ -410,7 +410,7 @@ export default function TransactionCreateForm(props: any) {
                 <div className="space-y-2">
                   <label htmlFor={`transactions.${index}.description`} className="block text-sm font-medium">
                     Description
-                    <span className="text-xs text-gray-500 ml-2">
+                    <span className="text-[8px] text-gray-500 ml-2">
                       (Auto-categorization will trigger as you type)
                     </span>
                   </label>
