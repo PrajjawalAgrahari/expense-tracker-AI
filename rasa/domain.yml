@@ -10,6 +10,9 @@ intents:
   - mood_unhappy
   - bot_challenge
   - add_expense
+  - query_expense
+  - query_budget
+  - query_expense_analytics
 
 # These are the specific pieces of information RASA will extract from user messages:
 entities:
@@ -17,35 +20,77 @@ entities:
   - category
   - date
   - description
+  - time
+  - merchant
+  - type
 
 # Slots store the extracted entity values during conversation:
 slots:
+  requested_slot:
+    type: text
+    influence_conversation: true
+    mappings:
+      - type: from_entity
+        entity: requested_slot
   amount:
     type: float
     influence_conversation: false
     mappings:
-      - type: # custom mappings: type: custom indicates you're using custom code to extract and set these values
-
+      - type: from_entity
+        entity: amount
   category:
     type: text
     influence_conversation: false
     mappings:
-      - type: custom
-
+      - type: from_entity
+        entity: category
   date:
     type: text
     influence_conversation: false
     mappings:
-      - type: custom
-
+      - type: from_entity
+        entity: date
   description:
     type: text
     influence_conversation: false
     mappings:
-      - type: custom
-
-  requested_slot:
+      - type: from_entity
+        entity: description
+  time:
     type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: time
+  merchant:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: merchant
+  type:
+    type: text
+    influence_conversation: false
+    mappings:
+      - type: from_entity
+        entity: type
+  current_page:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: custom
+  total_pages:
+    type: float
+    influence_conversation: false
+    mappings:
+      - type: custom
+  has_more:
+    type: bool
+    influence_conversation: false
+    mappings:
+      - type: custom
+  total_transactions:
+    type: float
     influence_conversation: false
     mappings:
       - type: custom
@@ -53,6 +98,7 @@ slots:
 # These are predefined text responses the bot can use:
 responses:
   utter_greet:
+    - text: "Hey! How can I help you with your expenses today?"
     - text: "Hello! I'm your expense tracking assistant. How can I help you today?"
     - text: "Hi there! I can help you track expenses or check your spending. What would you like to do?"
     - text: "Hey! Need help with tracking expenses?"
@@ -65,7 +111,7 @@ responses:
     - text: "Did that help you?"
 
   utter_happy:
-    - text: "Great, carry on!"
+    - text: "Great! Let me know if you need help with your expenses."
 
   utter_goodbye:
     - text: "Bye"
@@ -73,8 +119,14 @@ responses:
   utter_iamabot:
     - text: "I am a bot, powered by Rasa."
 
+  utter_default:
+    - text: "I'm not sure how to help with that. You can ask me about your expenses, budget, or spending analytics."
+
 actions:
   - action_add_expense
+  - action_query_expense
+  - action_query_budget
+  - action_query_expense_analytics
 
 session_config:
   session_expiration_time: 60

@@ -1,101 +1,133 @@
 version: "3.1"
 
 nlu:
-- intent: greet
-  examples: |
-    - hey
-    - hello
-    - hi
-    - hello there
-    - good morning
-    - good evening
-    - moin
-    - hey there
-    - let's go
-    - hey dude
-    - goodmorning
-    - goodevening
-    - good afternoon
+  - intent: greet
+    examples: |
+      - hey
+      - hello
+      - hi
+      - hello there
+      - good morning
+      - good evening
+      - moin
+      - hey there
+      - let's go
+      - hey dude
+      - goodmorning
+      - goodevening
+      - good afternoon
 
-- intent: goodbye
-  examples: |
-    - cu
-    - good by
-    - cee you later
-    - good night
-    - bye
-    - goodbye
-    - have a nice day
-    - see you around
-    - bye bye
-    - see you later
+  - intent: goodbye
+    examples: |
+      - cu
+      - good by
+      - cee you later
+      - good night
+      - bye
+      - goodbye
+      - have a nice day
+      - see you around
+      - bye bye
+      - see you later
 
-- intent: affirm
-  examples: |
-    - yes
-    - y
-    - indeed
-    - of course
-    - that sounds good
-    - correct
+  - intent: affirm
+    examples: |
+      - yes
+      - y
+      - indeed
+      - of course
+      - that sounds good
+      - correct
 
-- intent: deny
-  examples: |
-    - no
-    - n
-    - never
-    - I don't think so
-    - don't like that
-    - no way
-    - not really
+  - intent: deny
+    examples: |
+      - no
+      - n
+      - never
+      - I don't think so
+      - don't like that
+      - no way
+      - not really
 
-- intent: mood_great
-  examples: |
-    - perfect
-    - great
-    - amazing
-    - feeling like a king
-    - wonderful
-    - I am feeling very good
-    - I am great
-    - I am amazing
-    - I am going to save the world
-    - super stoked
-    - extremely good
-    - so so perfect
-    - so good
-    - so perfect
+  - intent: mood_great
+    examples: |
+      - perfect
+      - great
+      - amazing
+      - feeling like a king
+      - wonderful
+      - I am feeling very good
+      - I am great
+      - I am amazing
+      - I am going to save the world
+      - super stoked
+      - extremely good
+      - so so perfect
+      - so good
+      - so perfect
 
-- intent: mood_unhappy
-  examples: |
-    - my day was horrible
-    - I am sad
-    - I don't feel very well
-    - I am disappointed
-    - super sad
-    - I'm so sad
-    - sad
-    - very sad
-    - unhappy
-    - not good
-    - not very good
-    - extremly sad
-    - so saad
-    - so sad
+  - intent: mood_unhappy
+    examples: |
+      - my day was horrible
+      - I am sad
+      - I don't feel very well
+      - I am disappointed
+      - super sad
+      - I'm so sad
+      - sad
+      - very sad
+      - unhappy
+      - not good
+      - not very good
+      - extremly sad
+      - so saad
+      - so sad
 
-- intent: bot_challenge
-  examples: |
-    - are you a bot?
-    - are you a human?
-    - am I talking to a bot?
-    - am I talking to a human?
+  - intent: bot_challenge
+    examples: |
+      - are you a bot?
+      - are you a human?
+      - am I talking to a bot?
+      - am I talking to a human?
 
-- intent: add_expense
-  examples: |
-    - I spent [50](amount) on [groceries](category)
-    - Add [30](amount) for [dinner](category) [yesterday](date)
-    - Record [coffee](category) expense of [$4.50](amount)
-    - New expense [20](amount) for [transport](category)
+  - intent: add_expense
+    examples: |
+      - I spent [50](amount) on [groceries](category)
+      - Add [30](amount) for [dinner](category) [yesterday](date)
+      - Record [coffee](category) expense of [$4.50](amount)
+      - New expense [20](amount) for [transport](category)
+
+  - intent: query_expense
+    examples: |
+      - Show my expenses for [this month](time)
+      - What did I spend [last week](time)?
+      - How much did I spend on [food](category) [this month](time)?
+      - Show my [transportation](category) expenses
+      - What's my total spending [this year](time)?
+      - Show expenses above [$100](amount)
+      - List all transactions under [$50](amount)
+      - What's my highest expense [this month](time)?
+      - Show my spending in [January](time)
+      - Find expenses at [Walmart](merchant)
+      - Show my [recurring](type) expenses
+      - Compare my spending between [last month](time) and [this month](time)
+
+  - intent: query_budget
+    examples: |
+      - How much of my budget is remaining?
+      - Am I over budget?
+      - Show my budget utilization
+      - How much can I still spend?
+      - What's my budget status?
+
+  - intent: query_expense_analytics
+    examples: |
+      - What's my average daily spending?
+      - Where am I overspending?
+      - Show my spending trends
+      - Which day do I spend the most?
+      - Generate a monthly expense report
+      - Give me a spending summary
 
 # - intent: query_expenses
 #   examples: |

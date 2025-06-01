@@ -21,6 +21,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Message is required' }, { status: 400 });
     }
 
+    console.log(message);
+
     const rasaResponse = await axios.post(`${RASA_SERVER_URL}/webhooks/rest/webhook`, {
       sender: userId || 'user',
       message,

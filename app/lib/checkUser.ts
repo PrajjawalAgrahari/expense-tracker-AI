@@ -38,3 +38,29 @@ export async function checkUser() {
         // console.log(error)
     }
 }
+
+export async function getUserId(clerkUserId: string) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: clerkUserId,
+            },
+            select: {
+                id: true
+            }
+        });
+        
+        // if (!user) {
+        //     return null;
+        // }
+
+        return user?.id;
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error('Error getting userId:', error.message);
+        } else {
+            console.error('Unknown error getting userId:', error);
+        }
+        return null;
+    }
+}

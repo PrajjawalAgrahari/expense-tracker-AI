@@ -111,48 +111,50 @@ export default function ChatInterface(): JSX.Element {
   };
 
   return (
-    <div className="flex flex-col h-96 max-w-md mx-auto bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="flex flex-col h-[calc(100vh-4rem)] max-w-4xl mx-auto bg-gradient-to-br from-blue-50 to-indigo-100 shadow-2xl rounded-lg">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white p-3 rounded-t-lg">
-        <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
-            <DollarSign className="w-4 h-4 text-white" />
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-t-lg">
+        <div className="flex items-center space-x-4">
+          <div className="w-12 h-12 bg-white bg-opacity-20 rounded-full flex items-center justify-center">
+            <DollarSign className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-sm font-semibold">Expense Tracker Bot</h1>
-            <p className="text-xs text-blue-100">Your finance assistant</p>
+            <h1 className="text-xl font-semibold">Expense Tracker Bot</h1>
+            <p className="text-blue-100">Your finance assistant</p>
           </div>
         </div>
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 p-3 overflow-y-auto space-y-3 bg-gray-50">
+      <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-opacity-90 bg-white">
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`flex ${msg.isBot ? "justify-start" : "justify-end"}`}
+            className={`flex ${
+              msg.isBot ? "justify-start" : "justify-end"
+            } animate-fadeIn`}
           >
-            <div className="flex items-start space-x-2 max-w-xs">
+            <div className="flex items-start space-x-3 max-w-2xl">
               {/* Avatar for bot messages */}
               {msg.isBot && (
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                  <Bot className="w-3 h-3 text-white" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center flex-shrink-0 shadow-md">
+                  <Bot className="w-5 h-5 text-white" />
                 </div>
               )}
 
               {/* Message Bubble */}
               <div className="flex flex-col">
                 <div
-                  className={`p-3 rounded-2xl shadow-sm ${
+                  className={`p-4 rounded-2xl shadow-md ${
                     msg.isBot
-                      ? "bg-white text-gray-800 rounded-bl-md"
-                      : "bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-br-md"
+                      ? "bg-white text-gray-800 rounded-bl-md border border-gray-100"
+                      : "bg-gradient-to-r from-blue-600 to-indigo-700 text-white rounded-br-md"
                   }`}
                 >
-                  <p className="text-sm leading-relaxed">{msg.text}</p>
+                  <p className="text-base leading-relaxed">{msg.text}</p>
                 </div>
                 <p
-                  className={`text-xs text-gray-500 mt-1 ${
+                  className={`text-xs text-gray-500 mt-2 ${
                     msg.isBot ? "text-left" : "text-right"
                   }`}
                 >
@@ -162,8 +164,8 @@ export default function ChatInterface(): JSX.Element {
 
               {/* Avatar for user messages */}
               {!msg.isBot && (
-                <div className="w-6 h-6 rounded-full bg-gradient-to-r from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
-                  <User className="w-3 h-3 text-white" />
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-600 to-emerald-700 flex items-center justify-center flex-shrink-0 shadow-md">
+                  <User className="w-5 h-5 text-white" />
                 </div>
               )}
             </div>
@@ -173,19 +175,19 @@ export default function ChatInterface(): JSX.Element {
         {/* Loading Indicator */}
         {isLoading && (
           <div className="flex justify-start">
-            <div className="flex items-start space-x-2 max-w-xs">
-              <div className="w-6 h-6 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                <Bot className="w-3 h-3 text-white" />
+            <div className="flex items-start space-x-3 max-w-2xl">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-indigo-700 flex items-center justify-center flex-shrink-0 shadow-md">
+                <Bot className="w-5 h-5 text-white" />
               </div>
-              <div className="bg-white p-3 rounded-2xl rounded-bl-md shadow-sm">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+              <div className="bg-white p-4 rounded-2xl rounded-bl-md shadow-md border border-gray-100">
+                <div className="flex space-x-2">
+                  <div className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-bounce"></div>
                   <div
-                    className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                    className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-bounce"
                     style={{ animationDelay: "0.2s" }}
                   ></div>
                   <div
-                    className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"
+                    className="w-2.5 h-2.5 bg-blue-600 rounded-full animate-bounce"
                     style={{ animationDelay: "0.4s" }}
                   ></div>
                 </div>
@@ -197,30 +199,23 @@ export default function ChatInterface(): JSX.Element {
       </div>
 
       {/* Input Area */}
-      <div className="bg-white border-t border-gray-200 p-3 rounded-b-lg">
-        <div className="flex space-x-2">
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 pr-10 text-sm"
-              placeholder="Type your message..."
-              disabled={isLoading}
-            />
-            <button
-              onClick={handleSend}
-              className={`absolute right-1 top-1/2 transform -translate-y-1/2 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200 ${
-                input.trim() && !isLoading
-                  ? "bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700"
-                  : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
-              disabled={!input.trim() || isLoading}
-            >
-              <Send className="w-3 h-3" />
-            </button>
-          </div>
+      <div className="bg-white border-t border-gray-200 p-4 rounded-b-lg">
+        <div className="flex items-center space-x-4">
+          <input
+            type="text"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder="Type your message..."
+            className="flex-1 p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
+          />
+          <button
+            onClick={handleSend}
+            disabled={!input.trim() || isLoading}
+            className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-4 rounded-xl hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed shadow-md"
+          >
+            <Send className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </div>
