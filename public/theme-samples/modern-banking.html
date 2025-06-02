@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Banking Theme - Expense Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #F8FAFC;
+            --primary: #8B5CF6;
+            --secondary: #C4B5FD;
+            --success: #2DD4BF;
+            --danger: #F97316;
+            --text: #1E293B;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text);
+        }
+
+        .dashboard-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.1);
+            border: 1px solid rgba(139, 92, 246, 0.1);
+            backdrop-filter: blur(8px);
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #8B5CF6, #2DD4BF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-purple-50 to-teal-50">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold gradient-text">Expense Dashboard</h1>
+            <p class="text-gray-600">Modern Banking Theme</p>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="dashboard-card p-6">
+                <h3 class="text-gray-600 text-sm">Total Balance</h3>
+                <p class="text-2xl font-bold gradient-text">$4,570.00</p>
+                <div class="mt-2 text-sm text-teal-600">+2.5% from last month</div>
+            </div>
+            <div class="dashboard-card p-6">
+                <h3 class="text-gray-600 text-sm">Monthly Income</h3>
+                <p class="text-2xl font-bold text-teal-600">$6,240.00</p>
+                <div class="mt-2 text-sm text-teal-600">+5% from last month</div>
+            </div>
+            <div class="dashboard-card p-6">
+                <h3 class="text-gray-600 text-sm">Monthly Expenses</h3>
+                <p class="text-2xl font-bold text-orange-500">$1,670.00</p>
+                <div class="mt-2 text-sm text-orange-500">-3% from last month</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Transactions -->
+            <div class="lg:col-span-2">
+                <div class="dashboard-card p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-purple-600">Recent Transactions</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                                    🛒
+                                </div>
+                                <div class="ml-4">
+                                    <p class="font-medium text-gray-800">Grocery Shopping</p>
+                                    <p class="text-sm text-gray-500">Today, 2:00 PM</p>
+                                </div>
+                            </div>
+                            <span class="text-orange-500 font-medium">-$85.00</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-white rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-teal-100 flex items-center justify-center">
+                                    💰
+                                </div>
+                                <div class="ml-4">
+                                    <p class="font-medium text-gray-800">Salary Deposit</p>
+                                    <p class="text-sm text-gray-500">Yesterday</p>
+                                </div>
+                            </div>
+                            <span class="text-teal-600 font-medium">+$3,200.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Overview -->
+            <div class="lg:col-span-1">
+                <div class="dashboard-card p-6">
+                    <h2 class="text-xl font-semibold mb-4 text-purple-600">Budget Overview</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-600">Food & Dining</span>
+                                <span class="text-sm font-medium text-purple-600">70%</span>
+                            </div>
+                            <div class="h-2 bg-purple-100 rounded-full">
+                                <div class="h-2 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"
+                                    style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-600">Transportation</span>
+                                <span class="text-sm font-medium text-purple-600">45%</span>
+                            </div>
+                            <div class="h-2 bg-purple-100 rounded-full">
+                                <div class="h-2 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"
+                                    style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-600">Entertainment</span>
+                                <span class="text-sm font-medium text-purple-600">30%</span>
+                            </div>
+                            <div class="h-2 bg-purple-100 rounded-full">
+                                <div class="h-2 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"
+                                    style="width: 30%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

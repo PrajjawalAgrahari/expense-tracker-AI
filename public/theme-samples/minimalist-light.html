@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Light Theme - Expense Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563EB;
+            --secondary: #F3F4F6;
+            --success: #10B981;
+            --danger: #EF4444;
+            --text: #1F2937;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #FFFFFF;
+            color: var(--text);
+        }
+        .dashboard-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Header -->
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Expense Dashboard</h1>
+            <p class="text-gray-600">Minimalist Light Theme</p>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="dashboard-card p-6">
+                <h3 class="text-gray-500 text-sm">Total Balance</h3>
+                <p class="text-2xl font-bold text-gray-800">$4,570.00</p>
+                <div class="mt-2 text-sm text-green-500">+2.5% from last month</div>
+            </div>
+            <div class="dashboard-card p-6">
+                <h3 class="text-gray-500 text-sm">Monthly Income</h3>
+                <p class="text-2xl font-bold" style="color: var(--success)">$6,240.00</p>
+                <div class="mt-2 text-sm text-green-500">+5% from last month</div>
+            </div>
+            <div class="dashboard-card p-6">
+                <h3 class="text-gray-500 text-sm">Monthly Expenses</h3>
+                <p class="text-2xl font-bold" style="color: var(--danger)">$1,670.00</p>
+                <div class="mt-2 text-sm text-red-500">-3% from last month</div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Recent Transactions -->
+            <div class="lg:col-span-2">
+                <div class="dashboard-card p-6">
+                    <h2 class="text-xl font-semibold mb-4">Recent Transactions</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
+                                    🛒
+                                </div>
+                                <div class="ml-4">
+                                    <p class="font-medium">Grocery Shopping</p>
+                                    <p class="text-sm text-gray-500">Today, 2:00 PM</p>
+                                </div>
+                            </div>
+                            <span class="text-red-500 font-medium">-$85.00</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                    💰
+                                </div>
+                                <div class="ml-4">
+                                    <p class="font-medium">Salary Deposit</p>
+                                    <p class="text-sm text-gray-500">Yesterday</p>
+                                </div>
+                            </div>
+                            <span class="text-green-500 font-medium">+$3,200.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Budget Overview -->
+            <div class="lg:col-span-1">
+                <div class="dashboard-card p-6">
+                    <h2 class="text-xl font-semibold mb-4">Budget Overview</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-600">Food & Dining</span>
+                                <span class="text-sm font-medium">70%</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 bg-blue-500 rounded-full" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-600">Transportation</span>
+                                <span class="text-sm font-medium">45%</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 bg-blue-500 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between mb-2">
+                                <span class="text-sm text-gray-600">Entertainment</span>
+                                <span class="text-sm font-medium">30%</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 rounded-full">
+                                <div class="h-2 bg-blue-500 rounded-full" style="width: 30%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
