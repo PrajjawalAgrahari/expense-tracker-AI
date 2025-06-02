@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect, JSX } from "react";
+import { useState, useRef, useEffect, JSX, useCallback } from "react";
 import { useAuth } from "@clerk/nextjs";
-import { Send, DollarSign, Bot, User } from "lucide-react";
+import { Send, DollarSign, Bot, User, Mic, MicOff } from "lucide-react";
+import { useVoiceRecognition } from "@/hooks/useVoiceRecognition";
 
 // Define proper TypeScript interfaces
 interface Message {
@@ -38,19 +39,15 @@ export default function ChatInterface(): JSX.Element {
     scrollToBottom();
   }, [messages]);
 
-  const handleSend = async (): Promise<void> => {
-    if (!input.trim()) return;
-
+  const processMessage = async (message: string): Promise<void> => {
     try {
       const token = await getToken();
-      console.log(token);
 
       // Add user message to chat
-      const userMessage = input;
       setMessages((prev) => [
         ...prev,
         {
-          text: userMessage,
+          text: message,
           isBot: false,
           timestamp: new Date(),
         },
@@ -59,14 +56,13 @@ export default function ChatInterface(): JSX.Element {
       setIsLoading(true);
 
       // Send message to API
-      console.log(userMessage);
       const response = await fetch("/api/chatbot", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ message: userMessage }),
+        body: JSON.stringify({ message }),
       });
 
       if (!response.ok) {
@@ -84,6 +80,12 @@ export default function ChatInterface(): JSX.Element {
           timestamp: new Date(),
         },
       ]);
+
+      // Optional: Read out the response for voice interactions
+      if ("speechSynthesis" in window) {
+        const utterance = new SpeechSynthesisUtterance(data.reply);
+        window.speechSynthesis.speak(utterance);
+      }
     } catch (error) {
       console.error("Error sending message:", error);
       setMessages((prev) => [
@@ -98,6 +100,22 @@ export default function ChatInterface(): JSX.Element {
       setIsLoading(false);
     }
   };
+
+  const handleSend = async (): Promise<void> => {
+    if (!input.trim()) return;
+    await processMessage(input);
+  };
+
+  // Define handleVoiceResult as a useCallback hook to prevent unnecessary recreations
+  const handleVoiceResult = useCallback(async (event: any) => {
+    const text = event.results[0][0].transcript;
+    await processMessage(text);
+  }, []); // Include any dependencies used inside handleVoiceResult
+
+  // Voice recognition setup - AFTER handleVoiceResult is defined
+  const { status, startListening, stopListening } =
+    useVoiceRecognition(handleVoiceResult);
+  const isListening = status === "listening";
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === "Enter" && !e.shiftKey) {
@@ -209,6 +227,24 @@ export default function ChatInterface(): JSX.Element {
             placeholder="Type your message..."
             className="flex-1 p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base"
           />
+
+          {/* Voice Input Button */}
+          <button
+            onClick={isListening ? stopListening : startListening}
+            className={`p-4 rounded-xl transition-all duration-200 ${
+              isListening
+                ? "bg-red-500 hover:bg-red-600"
+                : "bg-gradient-to-r from-blue-600 to-indigo-700 hover:opacity-90"
+            } text-white shadow-md`}
+          >
+            {isListening ? (
+              <MicOff className="w-5 h-5 animate-pulse" />
+            ) : (
+              <Mic className="w-5 h-5" />
+            )}
+          </button>
+
+          {/* Send Button */}
           <button
             onClick={handleSend}
             disabled={!input.trim() || isLoading}

@@ -1,0 +1,86 @@
+Voice Recognition Workflow in Expense Tracker Chat
+===========================================
+
+Overview
+--------
+The application implements voice recognition using the Web Speech API, allowing users to interact with the expense tracking chatbot through voice commands.
+
+Component Structure
+-----------------
+1. Chat Interface (app/(main)/chat/page.tsx)
+   - Main UI component
+   - Handles voice input/output
+   - Manages chat messages
+
+2. Voice Recognition Hook (hooks/useVoiceRecognition.ts)
+   - Custom hook managing Web Speech API
+   - Handles recognition states
+   - Provides control functions
+
+Workflow Steps
+-------------
+1. Initialization
+   - Voice recognition hook is initialized when chat interface loads
+   - Initial state is 'idle'
+   - Microphone button is available for user interaction
+
+2. Starting Voice Recognition
+   - User clicks microphone button
+   - startListening() is called
+   - Web Speech API instance is created
+   - Status changes to 'listening'
+   - Microphone button turns red to indicate active recording
+
+3. During Recognition
+   - Web Speech API listens to user's voice input
+   - Recognition is non-continuous (stops after speech pause)
+   - No interim results are shown (only final results)
+   - Language is set to 'en-US'
+
+4. Stopping Recognition
+   Methods:
+   a) Automatic Stop
+      - Occurs when user stops speaking (due to continuous=false)
+      - Recognition ends automatically
+   
+   b) Manual Stop
+      - User clicks red microphone button
+      - stopListening() is called
+      - Recognition is terminated immediately
+
+5. Processing Results
+   - onresult event triggers
+   - Transcribed text is captured
+   - Text is processed through handleVoiceResult
+   - Message is added to chat interface
+   - Bot processes the transcribed message
+
+6. Error Handling
+   - Recognition errors are caught and stored
+   - Status changes to 'error' if issues occur
+   - User is notified of any problems
+
+States
+------
+- idle: Initial state, ready for voice input
+- listening: Actively recording voice
+- error: Error occurred during recognition
+
+Key Features
+-----------
+1. Real-time status feedback
+2. Visual indicators for recording state
+3. Seamless integration with chat interface
+4. Error handling and user feedback
+5. Non-continuous recognition for better control
+6. Manual and automatic stopping options
+
+Technical Implementation
+----------------------
+- Uses Web Speech API (SpeechRecognition or webkitSpeechRecognition)
+- React hooks for state management
+- TypeScript for type safety
+- Integrated with chat UI using Tailwind CSS
+- Supports both voice input and text input simultaneously 
+
+recognition.onend = () =>  is responsible for stopping the recognition process.

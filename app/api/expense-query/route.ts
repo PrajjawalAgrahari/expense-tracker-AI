@@ -90,6 +90,8 @@ export async function POST(req: Request) {
             })
         };
 
+        console.log('where', where);
+
         // Query transactions using prisma client
         const transactions = await prisma.transaction.findMany({
             where,

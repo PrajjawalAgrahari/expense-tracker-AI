@@ -16,6 +16,8 @@ export async function POST(request: NextRequest) {
       // Extract entities from the message using Gemini
       const extractedData = await extractExpenseFromMessage(data.message);
 
+      console.log('Extracted data:', extractedData);
+
       if (!extractedData) {
         return NextResponse.json(
           { error: 'Could not extract expense information from message' },
