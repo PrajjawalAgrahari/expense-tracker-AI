@@ -37,15 +37,15 @@ export function Email({
             <Section className="flex flex-col mt-4 p-4 rounded-lg shadow-md bg-gray-100">
               <div className="bg-white w-full">
                 <Text>Budget Amount</Text>
-                <Text>${budgetAmount}</Text>
+                <Text>₹{budgetAmount}</Text>
               </div>
               <div className="bg-white w-[100%]">
                 <Text>Spent So Far</Text>
-                <Text>${spentSoFar}</Text>
+                <Text>₹{spentSoFar}</Text>
               </div>
               <div className="bg-white w-[100%]">
                 <Text>Remaining</Text>
-                <Text>${remaining?.toFixed(2)}</Text>
+                <Text>₹{remaining?.toFixed(2)}</Text>
               </div>
             </Section>
           </Container>

@@ -49,9 +49,13 @@ export default function TransactionCreateForm(props: any) {
   const transaction = props.transaction;
   const edit = transaction !== null;
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [categorizingStates, setCategorizingStates] = useState<Record<number, boolean>>({});
-  const [autoSuggestions, setAutoSuggestions] = useState<Record<number, string>>({});
-  
+  const [categorizingStates, setCategorizingStates] = useState<
+    Record<number, boolean>
+  >({});
+  const [autoSuggestions, setAutoSuggestions] = useState<
+    Record<number, string>
+  >({});
+
   let defaultAccountId: string = "";
   for (let i = 0; i < accounts.length; i++) {
     if (accounts[i].isDefault) {
@@ -107,38 +111,53 @@ export default function TransactionCreateForm(props: any) {
   });
 
   // Helper function to safely get error messages
-  const getErrorMessage = (index: number, field: keyof TransactionData): string | undefined => {
-    return get(errors, `transactions.${index}.${field}.message`) as string | undefined;
+  const getErrorMessage = (
+    index: number,
+    field: keyof TransactionData
+  ): string | undefined => {
+    return get(errors, `transactions.${index}.${field}.message`) as
+      | string
+      | undefined;
   };
 
   // Auto-categorization logic
-  const performAutoCategorization = async (index: number, description: string, type: "EXPENSE" | "INCOME") => {
+  const performAutoCategorization = async (
+    index: number,
+    description: string,
+    type: "EXPENSE" | "INCOME"
+  ) => {
     if (!description || description.trim().length < 3) return;
 
-    setCategorizingStates(prev => ({ ...prev, [index]: true }));
-    
+    setCategorizingStates((prev) => ({ ...prev, [index]: true }));
+
     try {
-      const suggestedCategory = await categorizeTransactionDescription(description, type);
-      
+      const suggestedCategory = await categorizeTransactionDescription(
+        description,
+        type
+      );
+
       if (suggestedCategory) {
         // Check if user hasn't manually selected a category yet
         const currentCategory = getValues(`transactions.${index}.category`);
         if (!currentCategory || currentCategory === autoSuggestions[index]) {
           setValue(`transactions.${index}.category`, suggestedCategory);
-          setAutoSuggestions(prev => ({ ...prev, [index]: suggestedCategory }));
+          setAutoSuggestions((prev) => ({
+            ...prev,
+            [index]: suggestedCategory,
+          }));
         }
       }
     } catch (error) {
-      console.error('Auto-categorization error:', error);
+      console.error("Auto-categorization error:", error);
     } finally {
-      setCategorizingStates(prev => ({ ...prev, [index]: false }));
+      setCategorizingStates((prev) => ({ ...prev, [index]: false }));
     }
   };
 
   fields.forEach((_, index) => {
     const description = watch(`transactions.${index}.description`);
     const type = watch(`transactions.${index}.type`);
-    
+
     useDebounce(
       () => {
         if (description && type) {
@@ -149,7 +168,6 @@ export default function TransactionCreateForm(props: any) {
       [description, type, index]
     );
   });
-
 
   async function onSubmit(data: BulkTransactionData) {
     setIsSubmitting(true);
@@ -224,7 +242,7 @@ export default function TransactionCreateForm(props: any) {
   const handleManualCategoryChange = (index: number, value: string) => {
     setValue(`transactions.${index}.category`, value);
     // Clear auto-suggestion when user manually selects
-    setAutoSuggestions(prev => ({ ...prev, [index]: '' }));
+    setAutoSuggestions((prev) => ({ ...prev, [index]: "" }));
   };
 
   return (
@@ -242,23 +260,28 @@ export default function TransactionCreateForm(props: any) {
           );
 
           return (
-            <div key={field.id} className="p-6 border rounded-lg shadow-sm bg-white">
+            <div
+              key={field.id}
+              className="p-6 border rounded-lg shadow-sm bg-white"
+            >
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium">Transaction #{index + 1}</h3>
+                <h3 className="text-lg font-medium">
+                  Transaction #{index + 1}
+                </h3>
                 <div className="flex gap-2">
                   {fields.length > 1 && (
-                    <Button 
-                      type="button" 
-                      variant="outline" 
+                    <Button
+                      type="button"
+                      variant="outline"
                       size="icon"
                       onClick={() => remove(index)}
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   )}
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     size="icon"
                     onClick={() => copyTransaction(index)}
                   >
@@ -270,14 +293,20 @@ export default function TransactionCreateForm(props: any) {
               {/* Type and Amount Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="space-y-2">
-                  <label htmlFor={`transactions.${index}.type`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`transactions.${index}.type`}
+                    className="block text-sm font-medium"
+                  >
                     Transaction Type
                   </label>
                   <Select
                     onValueChange={(value) => {
-                      setValue(`transactions.${index}.type`, value as "EXPENSE" | "INCOME")
-                      setValue(`transactions.${index}.category`, ""); 
-                      setAutoSuggestions(prev => ({ ...prev, [index]: '' })); 
+                      setValue(
+                        `transactions.${index}.type`,
+                        value as "EXPENSE" | "INCOME"
+                      );
+                      setValue(`transactions.${index}.category`, "");
+                      setAutoSuggestions((prev) => ({ ...prev, [index]: "" }));
                     }}
                     value={watch(`transactions.${index}.type`)}
                   >
@@ -289,13 +318,18 @@ export default function TransactionCreateForm(props: any) {
                       <SelectItem value="INCOME">Income</SelectItem>
                     </SelectContent>
                   </Select>
-                  {getErrorMessage(index, 'type') && (
-                    <p className="text-red-500 text-sm">{getErrorMessage(index, 'type')}</p>
+                  {getErrorMessage(index, "type") && (
+                    <p className="text-red-500 text-sm">
+                      {getErrorMessage(index, "type")}
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor={`transactions.${index}.amount`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`transactions.${index}.amount`}
+                    className="block text-sm font-medium"
+                  >
                     Amount
                   </label>
                   <Input
@@ -304,8 +338,10 @@ export default function TransactionCreateForm(props: any) {
                     step="0.01"
                     placeholder="0.00"
                   />
-                  {getErrorMessage(index, 'amount') && (
-                    <p className="text-red-500 text-sm">{getErrorMessage(index, 'amount')}</p>
+                  {getErrorMessage(index, "amount") && (
+                    <p className="text-red-500 text-sm">
+                      {getErrorMessage(index, "amount")}
+                    </p>
                   )}
                 </div>
               </div>
@@ -313,11 +349,16 @@ export default function TransactionCreateForm(props: any) {
               {/* Account and Category Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="space-y-2">
-                  <label htmlFor={`transactions.${index}.account`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`transactions.${index}.account`}
+                    className="block text-sm font-medium"
+                  >
                     Account
                   </label>
                   <Select
-                    onValueChange={(value) => setValue(`transactions.${index}.account`, value)}
+                    onValueChange={(value) =>
+                      setValue(`transactions.${index}.account`, value)
+                    }
                     value={watch(`transactions.${index}.account`)}
                   >
                     <SelectTrigger>
@@ -326,20 +367,25 @@ export default function TransactionCreateForm(props: any) {
                     <SelectContent>
                       {accounts?.map((account: Account) => (
                         <SelectItem key={account.id} value={account.id}>
-                          {account.name} (${account.balance.toFixed(2)})
+                          {account.name} (₹{account.balance.toFixed(2)})
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                   <CreateAccountDrawer>
-                  {getErrorMessage(index, 'account') && (
-                    <p className="text-red-500 text-sm">{getErrorMessage(index, 'account')}</p>
-                  )}
+                    {getErrorMessage(index, "account") && (
+                      <p className="text-red-500 text-sm">
+                        {getErrorMessage(index, "account")}
+                      </p>
+                    )}
                   </CreateAccountDrawer>
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor={`transactions.${index}.category`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`transactions.${index}.category`}
+                    className="block text-sm font-medium"
+                  >
                     Category
                     {isCategorizing && (
                       <span className="ml-2 inline-flex items-center text-xs text-blue-600">
@@ -355,7 +401,9 @@ export default function TransactionCreateForm(props: any) {
                     )}
                   </label>
                   <Select
-                    onValueChange={(value) => handleManualCategoryChange(index, value)}
+                    onValueChange={(value) =>
+                      handleManualCategoryChange(index, value)
+                    }
                     value={currentCategory}
                   >
                     <SelectTrigger>
@@ -369,8 +417,10 @@ export default function TransactionCreateForm(props: any) {
                       ))}
                     </SelectContent>
                   </Select>
-                  {getErrorMessage(index, 'category') && (
-                    <p className="text-red-500 text-sm">{getErrorMessage(index, 'category')}</p>
+                  {getErrorMessage(index, "category") && (
+                    <p className="text-red-500 text-sm">
+                      {getErrorMessage(index, "category")}
+                    </p>
                   )}
                 </div>
               </div>
@@ -378,12 +428,18 @@ export default function TransactionCreateForm(props: any) {
               {/* Date and Description Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="space-y-2">
-                  <label htmlFor={`transactions.${index}.date`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`transactions.${index}.date`}
+                    className="block text-sm font-medium"
+                  >
                     Date
                   </label>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start text-left">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start text-left"
+                      >
                         {date?.toLocaleString("default", {
                           month: "long",
                           day: "numeric",
@@ -396,19 +452,27 @@ export default function TransactionCreateForm(props: any) {
                         mode="single"
                         selected={date}
                         onSelect={(selectedDate) => {
-                          setValue(`transactions.${index}.date`, selectedDate as Date);
+                          setValue(
+                            `transactions.${index}.date`,
+                            selectedDate as Date
+                          );
                         }}
                         className="rounded-md border"
                       />
                     </PopoverContent>
                   </Popover>
-                  {getErrorMessage(index, 'date') && (
-                    <p className="text-red-500 text-sm">{getErrorMessage(index, 'date')}</p>
+                  {getErrorMessage(index, "date") && (
+                    <p className="text-red-500 text-sm">
+                      {getErrorMessage(index, "date")}
+                    </p>
                   )}
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor={`transactions.${index}.description`} className="block text-sm font-medium">
+                  <label
+                    htmlFor={`transactions.${index}.description`}
+                    className="block text-sm font-medium"
+                  >
                     Description
                     <span className="text-[8px] text-gray-500 ml-2">
                       (Auto-categorization will trigger as you type)
@@ -418,8 +482,10 @@ export default function TransactionCreateForm(props: any) {
                     {...register(`transactions.${index}.description`)}
                     placeholder="Enter description"
                   />
-                  {getErrorMessage(index, 'description') && (
-                    <p className="text-red-500 text-sm">{getErrorMessage(index, 'description')}</p>
+                  {getErrorMessage(index, "description") && (
+                    <p className="text-red-500 text-sm">
+                      {getErrorMessage(index, "description")}
+                    </p>
                   )}
                 </div>
               </div>
@@ -443,11 +509,19 @@ export default function TransactionCreateForm(props: any) {
 
               {isRecurring && (
                 <div className="mb-4">
-                  <label htmlFor={`transactions.${index}.recurringInterval`} className="block text-sm font-medium mb-2">
+                  <label
+                    htmlFor={`transactions.${index}.recurringInterval`}
+                    className="block text-sm font-medium mb-2"
+                  >
                     Set up a recurring schedule for this transaction
                   </label>
                   <Select
-                    onValueChange={(value) => setValue(`transactions.${index}.recurringInterval`, value as "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY")}
+                    onValueChange={(value) =>
+                      setValue(
+                        `transactions.${index}.recurringInterval`,
+                        value as "DAILY" | "WEEKLY" | "MONTHLY" | "YEARLY"
+                      )
+                    }
                     value={watch(`transactions.${index}.recurringInterval`)}
                   >
                     <SelectTrigger>
@@ -465,7 +539,9 @@ export default function TransactionCreateForm(props: any) {
 
               {/* Receipt Upload */}
               <div className="mb-4">
-                <label className="block text-sm font-medium mb-2">Upload Receipt (Optional)</label>
+                <label className="block text-sm font-medium mb-2">
+                  Upload Receipt (Optional)
+                </label>
                 <Input
                   type="file"
                   accept="image/*"
@@ -498,33 +574,29 @@ export default function TransactionCreateForm(props: any) {
         <div className="p-4 bg-gray-50 rounded-lg border">
           <h3 className="font-medium mb-2">Summary</h3>
           <p>Total Transactions: {fields.length}</p>
-          <p className={calculateTotal() >= 0 ? "text-green-600" : "text-red-600"}>
-            Net Amount: ${calculateTotal().toFixed(2)}
+          <p
+            className={
+              calculateTotal() >= 0 ? "text-green-600" : "text-red-600"
+            }
+          >
+            Net Amount: ₹{calculateTotal().toFixed(2)}
           </p>
         </div>
       )}
 
       {/* Action Buttons */}
       <div className="flex justify-end space-x-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-        >
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-        <Button 
-          type="submit"
-          disabled={isSubmitting}
-        >
-          {isSubmitting 
-            ? "Processing..." 
-            : edit 
-              ? "Update Transaction" 
-              : fields.length > 1 
-                ? `Add ${fields.length} Transactions` 
-                : "Add Transaction"
-          }
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting
+            ? "Processing..."
+            : edit
+            ? "Update Transaction"
+            : fields.length > 1
+            ? `Add ${fields.length} Transactions`
+            : "Add Transaction"}
         </Button>
       </div>
     </form>

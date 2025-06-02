@@ -22,7 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { deleteOneRow } from "@/app/lib/account";
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export type TransactionColumns = {
   transactionId: string;
@@ -134,7 +134,7 @@ export const columns: ColumnDef<TransactionColumns>[] = [
             "text-green-500": intAmount > 0,
           })}
         >
-          {amount.toString()}
+          ₹{amount.toString()}
         </div>
       );
     },
@@ -200,12 +200,21 @@ export const columns: ColumnDef<TransactionColumns>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => {
-              Router.push(`/transaction/create?edit=${row.getValue("transactionId")}`);
-            }}>Edit</DropdownMenuItem>
-            <DropdownMenuItem className="text-destructive" onClick={async () => {
-              await deleteOneRow(row.getValue("transactionId"));
-            }}>
+            <DropdownMenuItem
+              onClick={() => {
+                Router.push(
+                  `/transaction/create?edit=${row.getValue("transactionId")}`
+                );
+              }}
+            >
+              Edit
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive"
+              onClick={async () => {
+                await deleteOneRow(row.getValue("transactionId"));
+              }}
+            >
               Delete
             </DropdownMenuItem>
           </DropdownMenuContent>
@@ -236,5 +245,5 @@ export const columns: ColumnDef<TransactionColumns>[] = [
       const id: String = row.getValue("transactionId");
       return <div className="hidden">{id}</div>;
     },
-  }
+  },
 ];

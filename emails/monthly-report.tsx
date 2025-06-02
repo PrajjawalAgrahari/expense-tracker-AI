@@ -27,15 +27,15 @@ export function Email({ name, stats, month, insights }: any) {
             <Section className="flex flex-col mt-4 p-4 rounded-lg shadow-md bg-gray-100">
               <div className="bg-white w-full">
                 <Text>Total Income</Text>
-                <Text>${stats.totalIncome}</Text>
+                <Text>₹{stats.totalIncome}</Text>
               </div>
               <div className="bg-white w-[100%]">
                 <Text>Total Expenses</Text>
-                <Text>${stats.totalExpense}</Text>
+                <Text>₹{stats.totalExpense}</Text>
               </div>
               <div className="bg-white w-[100%]">
                 <Text>Net</Text>
-                <Text>${stats.totalIncome - stats.totalExpense}</Text>
+                <Text>₹{stats.totalIncome - stats.totalExpense}</Text>
               </div>
             </Section>
             <Section>
@@ -47,7 +47,7 @@ export function Email({ name, stats, month, insights }: any) {
                       <Text>{category}</Text>
                     </Column>
                     <Column className="w-1/2 text-right">
-                      <Text>${amount}</Text>
+                      <Text>₹{amount}</Text>
                     </Column>
                   </Row>
                 )

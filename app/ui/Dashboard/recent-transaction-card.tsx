@@ -89,7 +89,7 @@ export default function RecentTransactionsCard(props: any) {
                     </span>
                   </div>
                   <span className="text-sm font-semibold">
-                    {transaction.amount}
+                    ₹{transaction.amount}
                   </span>
                 </div>
               );

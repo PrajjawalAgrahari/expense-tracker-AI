@@ -54,8 +54,8 @@ export default function TransactionChart(props: { id: string; data: any[] }) {
     let income = 0,
       expense = 0;
     newData = newData.map((item) => {
-        income += item.INCOME
-        expense += item.EXPENSE;
+      income += item.INCOME;
+      expense += item.EXPENSE;
       return {
         ...item,
         date: item.date.toLocaleDateString("en-US", {
@@ -96,19 +96,19 @@ export default function TransactionChart(props: { id: string; data: any[] }) {
             <div className="flex flex-col items-center">
               <span className="text-gray-600 text-sm">Total Income</span>
               <span className="text-green-600 text-lg font-bold">
-                {filteredData.income.toFixed(2)}
+                ₹{filteredData.income.toFixed(2)}
               </span>
             </div>
             <div className="flex flex-col items-center">
               <span className="text-gray-600 text-sm">Total Expenses</span>
               <span className="text-red-600 text-lg font-bold">
-                {filteredData.expense.toFixed(2)}
+                ₹{filteredData.expense.toFixed(2)}
               </span>
             </div>
             <div className="flex flex-col items-center">
               <span className="text-gray-600 text-sm">Net</span>
               <span className="text-green-600 text-lg font-bold">
-                {(filteredData.income - filteredData.expense).toFixed(2)}
+                ₹{(filteredData.income - filteredData.expense).toFixed(2)}
               </span>
             </div>
           </div>

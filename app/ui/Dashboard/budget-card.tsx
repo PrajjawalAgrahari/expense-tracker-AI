@@ -21,7 +21,7 @@ export default function BudgetCard(props: any) {
               <span>
                 {budget ? (
                   <>
-                    {lastMonthExpend} of {budget.amount} spent
+                    ₹{lastMonthExpend} of ₹{budget.amount} spent
                   </>
                 ) : (
                   "No budget set"
@@ -55,6 +55,7 @@ export default function BudgetCard(props: any) {
               <Input
                 className="max-w-[100px]"
                 name="amount"
+                placeholder="₹0.00"
                 defaultValue={budget?.amount}
               ></Input>
               <Button className="cursor-pointer" type="submit">

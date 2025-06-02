@@ -44,7 +44,7 @@ export default async function AccountPage({
           </span>
         </div>
         <div className="flex flex-col">
-          <span>{account.balance}</span>
+          <span>₹{account.balance}</span>
           <span>{account._count.transactions} Transactions</span>
         </div>
       </div>

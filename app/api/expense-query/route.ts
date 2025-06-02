@@ -13,9 +13,9 @@ const formatDate = (date: Date): string => {
 };
 
 const formatCurrency = (amount: number): string => {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('en-IN', {
         style: 'currency',
-        currency: 'USD'
+        currency: 'INR'
     }).format(amount);
 };
 
