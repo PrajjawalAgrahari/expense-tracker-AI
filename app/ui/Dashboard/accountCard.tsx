@@ -2,23 +2,16 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { ArrowUpRight, ArrowDownRight, Wallet } from "lucide-react";
 import Link from "next/link";
 import { changeDefaultAccount } from "@/app/lib/dashboard";
 import { postSubmission } from "@/app/lib/data-submission";
 import { Toaster, toast } from "sonner";
-import { useEffect } from "react";
 
 export default function AccountCard({ ...account }) {
-  let type: string = account.type;
-  type = type[0] + type.slice(1).toLowerCase();
+  const type = account.type[0] + account.type.slice(1).toLowerCase();
 
-  const {
-    data,
-    loading: isLoading,
-    error,
-    fn: changeDefault,
-  } = postSubmission(changeDefaultAccount);
+  const { fn: changeDefault } = postSubmission(changeDefaultAccount);
 
   async function handleDefaultChange() {
     if (account.isDefault) {
@@ -28,45 +21,49 @@ export default function AccountCard({ ...account }) {
     await changeDefault(account.id);
   }
 
-    // useEffect(() => {
-    //   if (!isLoading) {
-    //     if (error !== "") {
-    //       toast.error(error || "Something went wrong");
-    //     } else {
-    //       toast.success("Default account changed successfully");
-    //     }
-    //   }
-    // }, [isLoading, error]);
-
   return (
-    <Card className="py-0">
+    <Card className="overflow-hidden hover:shadow-md transition-all duration-200">
       <Toaster />
       <Link href={`/account/${account.id}`}>
-        <CardContent className="p-6 flex flex-col gap-3 justify-center">
-          <div className="text-[0.875rem] font-medium flex items-center justify-between">
-            <span>{account.name}</span>
+        <CardContent className="p-6">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center">
+                <Wallet className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900">{account.name}</h3>
+                <p className="text-sm text-gray-500">{type} Account</p>
+              </div>
+            </div>
             <Switch
-              disabled={isLoading}
+              disabled={account.isDefault}
               checked={account.isDefault}
               onClick={async (e) => {
                 e.preventDefault();
                 await handleDefaultChange();
               }}
-            ></Switch>
+            />
           </div>
-          <div className="flex flex-col mb-2">
-            <span className="text-[1.5rem] font-bold">₹{account.balance}</span>
-            <span className="text-[0.75rem] text-[#737373]">
-              {type} Account
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="flex gap-1 items-center text-[0.875rem] text-[#737373]">
-              <ArrowUpRight className="h-4 w-4 text-green-400" /> Income
-            </span>
-            <span className="flex gap-1 items-center text-[0.875rem] text-[#737373]">
-              <ArrowDownRight className="h-4 w-4 text-red-400" /> Expense
-            </span>
+
+          <div className="space-y-4">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl font-bold text-gray-900">
+                ₹{account.balance}
+              </span>
+              <span className="text-sm text-gray-500">balance</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t">
+              <div className="flex items-center gap-1 text-sm">
+                <ArrowUpRight className="h-4 w-4 text-green-500" />
+                <span className="text-gray-600">Income</span>
+              </div>
+              <div className="flex items-center gap-1 text-sm">
+                <ArrowDownRight className="h-4 w-4 text-red-500" />
+                <span className="text-gray-600">Expense</span>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Link>

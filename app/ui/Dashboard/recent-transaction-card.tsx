@@ -1,7 +1,6 @@
 "use client";
 
 import { getFiveTransactions } from "@/app/lib/dashboard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -36,12 +35,12 @@ export default function RecentTransactionsCard(props: any) {
     };
 
     fetchTransactions();
-  }, []);
+  }, [defaultId]);
 
   return (
-    <Card className="w-[40%]">
-      <CardHeader className="flex items-center justify-between space-y-1 pb-2">
-        <CardTitle>Recent Transactions</CardTitle>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="font-medium">Recent Transactions</h3>
         <Select
           defaultValue={defaultId}
           onValueChange={async (value) => {
@@ -49,54 +48,54 @@ export default function RecentTransactionsCard(props: any) {
             setTransactions(newData);
           }}
         >
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] h-9 text-sm">
             <SelectValue placeholder={defaultAccount} />
           </SelectTrigger>
           <SelectContent>
-            {accounts.map((account: any) => {
-              return (
-                <SelectItem key={account.id} value={account.id}>
-                  {account.name}
-                </SelectItem>
-              );
-            })}
+            {accounts.map((account: any) => (
+              <SelectItem key={account.id} value={account.id}>
+                {account.name}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
-      </CardHeader>
-      <CardContent className="px-10">
+      </div>
+
+      <div className="space-y-3">
         {transactions?.length === 0 ? (
-          <div className="flex items-center justify-center h-32 text-muted-foreground">
+          <div className="flex items-center justify-center h-32 text-sm text-gray-500">
             No transactions found
           </div>
         ) : (
-          <div className="flex flex-col gap-2">
-            {transactions?.map((transaction: any) => {
-              return (
-                <div
-                  key={transaction.id}
-                  className="flex items-center justify-between"
-                >
-                  <div className="flex flex-col">
-                    <span className="text-sm font-semibold">
-                      {transaction.description}
-                    </span>
-                    <span className="text-sm">
-                      {transaction.date.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "2-digit",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <span className="text-sm font-semibold">
-                    ₹{transaction.amount}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+          transactions?.map((transaction: any) => (
+            <div
+              key={transaction.id}
+              className="flex items-start justify-between py-2"
+            >
+              <div className="space-y-1">
+                <p className="font-medium text-sm">{transaction.description}</p>
+                <p className="text-sm text-gray-500">
+                  {new Date(transaction.date).toLocaleDateString("en-US", {
+                    month: "short",
+                    day: "numeric",
+                    year: "numeric",
+                  })}
+                </p>
+              </div>
+              <span
+                className={`font-medium text-sm ${
+                  transaction.type === "EXPENSE"
+                    ? "text-red-600"
+                    : "text-green-600"
+                }`}
+              >
+                {transaction.type === "EXPENSE" ? "-" : "+"}₹
+                {transaction.amount}
+              </span>
+            </div>
+          ))
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

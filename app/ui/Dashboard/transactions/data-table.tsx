@@ -39,11 +39,13 @@ import { DataTablePagination } from "./pagination";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  onDataChange?: () => Promise<void>;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  onDataChange,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [sorting, setSorting] = React.useState<SortingState>([]);
@@ -103,6 +105,11 @@ export function DataTable<TData, TValue>({
 
     await deleteBulkTransactions(transactionIds);
     table.resetRowSelection();
+
+    // Call onDataChange after successful deletion
+    if (onDataChange) {
+      await onDataChange();
+    }
   }
 
   return (

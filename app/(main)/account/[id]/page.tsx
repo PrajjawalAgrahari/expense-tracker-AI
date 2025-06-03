@@ -1,11 +1,11 @@
 import { getAccountById, getDataForChart } from "@/app/lib/account";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
-import { DataTable } from "./data-table";
-import { columns } from "./columns";
+import { DataTable } from "@/app/ui/Dashboard/transactions/data-table";
+import { columns } from "@/app/ui/Dashboard/transactions/columns";
 import { Transaction } from "@/generated/prisma";
 import { BarLoader } from "react-spinners";
-import TransactionChart from "./transaction-chart";
+import TransactionChart from "@/app/ui/Dashboard/transactions/transaction-chart";
 
 export default async function AccountPage({
   params,

@@ -1,36 +1,78 @@
 import CreateAccountDrawer from "@/app/ui/Dashboard/create-account-drawer";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Plus } from "lucide-react";
-import { getBudget, getExpenseOfThisMonth, getUserAccounts } from "@/app/lib/dashboard";
+import {
+  getBudget,
+  getExpenseOfThisMonth,
+  getUserAccounts,
+} from "@/app/lib/dashboard";
 import AccountCard from "@/app/ui/Dashboard/accountCard";
 import BudgetCard from "@/app/ui/Dashboard/budget-card";
 import RecentTransactionsCard from "@/app/ui/Dashboard/recent-transaction-card";
-import SimplePieChart from "@/app/ui/Dashboard/pie-chart-card";
-import { getExpenseOfThisMonthCategory } from "@/app/lib/dashboard";
+import DashboardLayout from "@/app/ui/Dashboard/dashboard-layout";
+import { Button } from "@/components/ui/button";
 
 export default async function Dashboard() {
   const accounts = await getUserAccounts();
-  const accountCards = accounts?.map((account) => {
-    return <AccountCard key={account.id} {...account} />;
-  });
   const budget = await getBudget();
   const lastMonthExpend = await getExpenseOfThisMonth();
-  const chartData = await getExpenseOfThisMonthCategory();
-  return (
-    <>
-      <BudgetCard budget={budget} lastMonthExpend={lastMonthExpend}/>
-      <RecentTransactionsCard accounts={accounts}/>
-      <SimplePieChart data={chartData}/>
-      <CreateAccountDrawer>
-        <Card className="py-12 px-24 hover:shadow-md transition-all duration-200 ease-in-out cursor-pointer">
-          <CardContent className="flex flex-col items-center justify-center gap-2 text-muted-foreground">
-            <Plus className="h-10 w-10" />
-            <span className="text-[14px] font-[500]">Add new Account</span>
-          </CardContent>
-        </Card>
-      </CreateAccountDrawer>
 
-      <div className="grid grid-cols-3 gap-4">{accountCards}</div>
-    </>
+  return (
+    <DashboardLayout>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        {/* Left Column - Budget and Accounts */}
+        <div className="lg:col-span-8 space-y-6">
+          {/* Budget Progress */}
+          <Card className="bg-white shadow-sm hover:shadow-md transition-all duration-200">
+            <CardHeader className="pb-2 px-8">
+              <CardTitle className="text-xl font-semibold text-gray-800">
+                Monthly Budget
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-8 pb-8">
+              <BudgetCard budget={budget} lastMonthExpend={lastMonthExpend} />
+            </CardContent>
+          </Card>
+
+          {/* Accounts Grid */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Your Accounts
+              </h2>
+              <CreateAccountDrawer>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add Account
+                </Button>
+              </CreateAccountDrawer>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {accounts?.map((account) => (
+                <AccountCard key={account.id} {...account} />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column - Recent Transactions */}
+        <div className="lg:col-span-4">
+          <Card className="bg-white shadow-sm hover:shadow-md transition-all duration-200 sticky top-4">
+            <CardHeader className="pb-2 px-6">
+              <CardTitle className="text-xl font-semibold text-gray-800">
+                Recent Transactions
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="px-6">
+              <RecentTransactionsCard accounts={accounts} />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }

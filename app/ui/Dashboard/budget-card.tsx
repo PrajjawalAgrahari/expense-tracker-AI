@@ -2,78 +2,87 @@
 
 import { setBudget } from "@/app/lib/dashboard";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
+import { Pencil } from "lucide-react";
+import { useState } from "react";
 
 export default function BudgetCard(props: any) {
-  const [func, setFunc] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const budget = props.budget;
   const lastMonthExpend = props.lastMonthExpend;
+  const progress = budget ? (lastMonthExpend / budget.amount) * 100 : 0;
+
   return (
-    <Card>
-      <CardContent className="px-10">
-        <h2 className="text-lg font-semibold">Monthly Budget</h2>
-        {!func ? (
-          <div>
-            <div className="flex gap-4 items-center mt-2">
-              <span>
-                {budget ? (
-                  <>
-                    ₹{lastMonthExpend} of ₹{budget.amount} spent
-                  </>
-                ) : (
-                  "No budget set"
-                )}
-              </span>
-              <Button
-                className="cursor-pointer"
-                onClick={() => {
-                  setFunc(true);
-                }}
-              >
-                Set
-              </Button>
-            </div>
-            {budget && (
-              <Progress
-                value={budget ? (lastMonthExpend / budget.amount) * 100 : 0}
-                className="mt-4"
-              ></Progress>
-            )}
-          </div>
-        ) : (
-          <div className="mt-2">
-            <form
-              className="flex gap-4"
-              action={async (formData: FormData) => {
-                await setBudget(formData);
-                setFunc(false);
-              }}
-            >
-              <Input
-                className="max-w-[100px]"
-                name="amount"
-                placeholder="₹0.00"
-                defaultValue={budget?.amount}
-              ></Input>
-              <Button className="cursor-pointer" type="submit">
-                Tick
-              </Button>
-              <Button
-                className="cursor-pointer"
-                onClick={() => {
-                  setFunc(false);
-                }}
-              >
-                Cut
-              </Button>
-            </form>
-          </div>
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-3xl font-bold text-gray-900">
+            ₹{lastMonthExpend}
+          </span>
+          {budget && (
+            <>
+              <span className="text-xl text-gray-500 font-medium">/</span>
+              <span className="text-xl text-gray-500">₹{budget.amount}</span>
+            </>
+          )}
+        </div>
+        {!isEditing && (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 rounded-lg hover:bg-gray-100"
+            onClick={() => setIsEditing(true)}
+          >
+            <Pencil className="h-4 w-4 text-gray-500" />
+          </Button>
         )}
-      </CardContent>
-      {/* <Button><PencilIcon></PencilIcon></Button> */}
-    </Card>
+      </div>
+
+      {isEditing ? (
+        <form
+          className="flex items-center gap-2"
+          action={async (formData: FormData) => {
+            await setBudget(formData);
+            setIsEditing(false);
+          }}
+        >
+          <div className="flex items-center">
+            <span className="text-lg font-medium mr-2">₹</span>
+            <Input
+              className="w-32 text-lg"
+              name="amount"
+              placeholder="Set budget"
+              defaultValue={budget?.amount}
+              autoFocus
+            />
+          </div>
+          <Button type="submit" size="sm">
+            Set
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsEditing(false)}
+          >
+            Cancel
+          </Button>
+        </form>
+      ) : (
+        <div className="space-y-2">
+          <Progress
+            value={progress}
+            className="h-2 bg-gray-100 [&>div]:bg-blue-500"
+          />
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-500">
+              {progress.toFixed(1)}% spent
+            </span>
+            <span className="text-sm font-medium text-blue-600">On track</span>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

@@ -342,3 +342,104 @@ export async function getExpenseOfThisMonthCategory() {
         return []
     }
 }
+
+export async function getAllTransactions() {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        const transactions = await prisma.transaction.findMany({
+            where: {
+                userId: user.id,
+            },
+            orderBy: {
+                date: "desc",
+            },
+            include: {
+                account: {
+                    select: {
+                        name: true,
+                    }
+                }
+            }
+        });
+        return transactions.map((transaction) => ({
+            ...transaction,
+            amount: transaction.amount.toNumber(),
+        }));
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error fetching transactions:", error?.message);
+            throw error
+        }
+        return [];
+    }
+}
+
+export async function getDataForAllAccounts() {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+
+        // Get all transactions for the last 6 months
+        const sixMonthsAgo = new Date();
+        sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+        const transactions = await prisma.transaction.findMany({
+            where: {
+                userId: user.id,
+                date: {
+                    gte: sixMonthsAgo,
+                },
+            },
+            orderBy: {
+                date: "asc",
+            },
+        });
+
+        // Group transactions by date
+        const groupedData = transactions.reduce((acc: any, transaction) => {
+            const date = transaction.date.toISOString().split('T')[0];
+            if (!acc[date]) {
+                acc[date] = {
+                    date: transaction.date,
+                    INCOME: 0,
+                    EXPENSE: 0,
+                };
+            }
+            if (transaction.type === 'INCOME') {
+                acc[date].INCOME += transaction.amount.toNumber();
+            } else {
+                acc[date].EXPENSE += transaction.amount.toNumber();
+            }
+            return acc;
+        }, {});
+
+        return Object.values(groupedData);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error fetching chart data:", error?.message);
+            throw error
+        }
+        return [];
+    }
+}
