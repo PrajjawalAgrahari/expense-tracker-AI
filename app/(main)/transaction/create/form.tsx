@@ -33,7 +33,7 @@ import { extractTransactionData } from "@/app/lib/extract-transaction";
 import { categorizeTransactionDescription } from "@/app/lib/auto-categorize";
 import { useDebounce } from "@/hooks/debounce";
 import { z } from "zod";
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Trash2, Copy, PlusCircle, Sparkles, Loader2 } from "lucide-react";
 import get from "lodash/get"; // Add this import for safe nested property access
 
@@ -55,6 +55,10 @@ export default function TransactionCreateForm(props: any) {
   const [autoSuggestions, setAutoSuggestions] = useState<
     Record<number, string>
   >({});
+  const [lastChangedField, setLastChangedField] = useState<{
+    index: number;
+    field: string;
+  } | null>(null);
 
   let defaultAccountId: string = "";
   for (let i = 0; i < accounts.length; i++) {
@@ -110,6 +114,48 @@ export default function TransactionCreateForm(props: any) {
     name: "transactions",
   });
 
+  // Watch all transactions
+  const allTransactions = watch("transactions");
+
+  // Handle field changes
+  const handleFieldChange = useCallback((index: number, field: string) => {
+    setLastChangedField({ index, field });
+  }, []);
+
+  // Setup watchers for all fields
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (
+        name?.startsWith("transactions.") &&
+        (name?.endsWith(".description") || name?.endsWith(".type"))
+      ) {
+        const index = parseInt(name.split(".")[1]);
+        const field = name.split(".")[2];
+        handleFieldChange(index, field);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [watch, handleFieldChange]);
+
+  // Single debounce hook for auto-categorization
+  useDebounce(
+    () => {
+      if (lastChangedField && allTransactions?.[lastChangedField.index]) {
+        const transaction = allTransactions[lastChangedField.index];
+        if (transaction.description && transaction.type) {
+          performAutoCategorization(
+            lastChangedField.index,
+            transaction.description,
+            transaction.type
+          );
+        }
+      }
+    },
+    1000,
+    [lastChangedField, allTransactions]
+  );
+
   // Helper function to safely get error messages
   const getErrorMessage = (
     index: number,
@@ -153,21 +199,6 @@ export default function TransactionCreateForm(props: any) {
       setCategorizingStates((prev) => ({ ...prev, [index]: false }));
     }
   };
-
-  fields.forEach((_, index) => {
-    const description = watch(`transactions.${index}.description`);
-    const type = watch(`transactions.${index}.type`);
-
-    useDebounce(
-      () => {
-        if (description && type) {
-          performAutoCategorization(index, description, type);
-        }
-      },
-      1000, // 1 second delay
-      [description, type, index]
-    );
-  });
 
   async function onSubmit(data: BulkTransactionData) {
     setIsSubmitting(true);
