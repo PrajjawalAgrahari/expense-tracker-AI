@@ -1,0 +1,19 @@
+Indexes
+
+On transactions(bank_transaction_id)
+
+On transactions(user_id, date, amount) for fuzzy matching.
+
+On bank_accounts(user_id, bank_account_id).
+
+
+
+Background Job Infrastructure
+
+A scheduler (cron job, worker queue) to run incremental syncs every N hours (or triggered by webhooks).
+
+An API client wrapper for your chosen bank provider that can:
+
+Exchange tokens / OAuth handshake.
+
+Fetch transactions “since” a timestamp or for a date range.

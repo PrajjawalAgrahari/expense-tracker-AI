@@ -1,6 +1,6 @@
 import CreateAccountDrawer from "@/app/ui/Dashboard/create-account-drawer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus } from "lucide-react";
+import { Plus, Link as LinkIcon } from "lucide-react";
 import {
   getBudget,
   getExpenseOfThisMonth,
@@ -11,6 +11,7 @@ import BudgetCard from "@/app/ui/Dashboard/budget-card";
 import RecentTransactionsCard from "@/app/ui/Dashboard/recent-transaction-card";
 import DashboardLayout from "@/app/ui/Dashboard/dashboard-layout";
 import { Button } from "@/components/ui/button";
+import { LinkBankButton } from "@/app/ui/Dashboard/link-bank-button";
 
 export default async function Dashboard() {
   const accounts = await getUserAccounts();
@@ -40,16 +41,19 @@ export default async function Dashboard() {
               <h2 className="text-xl font-semibold text-gray-800">
                 Your Accounts
               </h2>
-              <CreateAccountDrawer>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add Account
-                </Button>
-              </CreateAccountDrawer>
+              <div className="flex gap-2">
+                <LinkBankButton />
+                <CreateAccountDrawer>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Account
+                  </Button>
+                </CreateAccountDrawer>
+              </div>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {accounts?.map((account) => (
