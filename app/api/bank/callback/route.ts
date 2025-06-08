@@ -1,3 +1,4 @@
+import storeTokens from "@/app/lib/token";
 import { NextResponse } from "next/server";
 
 // This would be in your environment variables in a real app
@@ -41,6 +42,8 @@ export async function GET(request: Request) {
         }
 
         const tokenData = await tokenResponse.json();
+        const { access_token, refresh_token } = tokenData;
+        await storeTokens(access_token, refresh_token);
         console.log("Received token data:", tokenData);
 
         // Redirect back to the dashboard with a success message
