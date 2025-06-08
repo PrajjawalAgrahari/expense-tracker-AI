@@ -5,6 +5,7 @@ import {
   getBudget,
   getExpenseOfThisMonth,
   getUserAccounts,
+  hasLinkedAccounts,
 } from "@/app/lib/dashboard";
 import AccountCard from "@/app/ui/Dashboard/accountCard";
 import BudgetCard from "@/app/ui/Dashboard/budget-card";
@@ -17,7 +18,7 @@ export default async function Dashboard() {
   const accounts = await getUserAccounts();
   const budget = await getBudget();
   const lastMonthExpend = await getExpenseOfThisMonth();
-
+  const hasLinked = await hasLinkedAccounts();
   return (
     <DashboardLayout>
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -40,9 +41,9 @@ export default async function Dashboard() {
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-semibold text-gray-800">
                 Your Accounts
-              </h2>
+              </h2>{" "}
               <div className="flex gap-2">
-                <LinkBankButton />
+                <LinkBankButton hasLinkedAccounts={hasLinked} />
                 <CreateAccountDrawer>
                   <Button
                     variant="outline"

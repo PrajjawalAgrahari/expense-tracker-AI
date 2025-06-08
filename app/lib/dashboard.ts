@@ -123,6 +123,36 @@ export async function getUserAccounts() {
     }
 }
 
+export async function hasLinkedAccounts() {
+    try {
+        const { userId } = await auth();
+        if (!userId) {
+            throw new Error('Unauthorized')
+        }
+        const user = await prisma.user.findUnique({
+            where: {
+                clerkUserId: userId,
+            },
+        });
+        if (!user) {
+            throw new Error('User not found')
+        }
+        const linkedAccount = await prisma.account.findFirst({
+            where: {
+                userId: user.id,
+                accountLinked: true,
+            },
+        });
+        return !!linkedAccount;
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error checking linked accounts:", error?.message);
+            throw error
+        }
+        return false;
+    }
+}
+
 export async function changeDefaultAccount(id: string) {
     try {
         const { userId } = await auth();

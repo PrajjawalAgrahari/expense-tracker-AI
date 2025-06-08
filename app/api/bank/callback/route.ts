@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
 // This would be in your environment variables in a real app
 const BANK_TOKEN_URL = "http://localhost:3001/auth/token";
@@ -44,13 +43,10 @@ export async function GET(request: Request) {
         const tokenData = await tokenResponse.json();
         console.log("Received token data:", tokenData);
 
-        // In a real app, store the access token securely in your database
-        // associated with the user's account
-
         // Redirect back to the dashboard with a success message
         return NextResponse.redirect(new URL("/dashboard?bank_linked=success", request.url));
     } catch (error) {
         console.error("Failed to handle bank callback:", error);
         return NextResponse.redirect(new URL("/dashboard?bank_linked=error", request.url));
     }
-} 
+}
