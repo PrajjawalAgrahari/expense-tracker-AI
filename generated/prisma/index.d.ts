@@ -2456,6 +2456,7 @@ export namespace Prisma {
     balance: Decimal | null
     isDefault: boolean | null
     userId: string | null
+    accountLinked: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2467,6 +2468,7 @@ export namespace Prisma {
     balance: Decimal | null
     isDefault: boolean | null
     userId: string | null
+    accountLinked: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2478,6 +2480,7 @@ export namespace Prisma {
     balance: number
     isDefault: number
     userId: number
+    accountLinked: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2499,6 +2502,7 @@ export namespace Prisma {
     balance?: true
     isDefault?: true
     userId?: true
+    accountLinked?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2510,6 +2514,7 @@ export namespace Prisma {
     balance?: true
     isDefault?: true
     userId?: true
+    accountLinked?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2521,6 +2526,7 @@ export namespace Prisma {
     balance?: true
     isDefault?: true
     userId?: true
+    accountLinked?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2619,6 +2625,7 @@ export namespace Prisma {
     balance: Decimal
     isDefault: boolean
     userId: string
+    accountLinked: boolean
     createdAt: Date
     updatedAt: Date
     _count: AccountCountAggregateOutputType | null
@@ -2649,6 +2656,7 @@ export namespace Prisma {
     balance?: boolean
     isDefault?: boolean
     userId?: boolean
+    accountLinked?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -2663,6 +2671,7 @@ export namespace Prisma {
     balance?: boolean
     isDefault?: boolean
     userId?: boolean
+    accountLinked?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -2675,6 +2684,7 @@ export namespace Prisma {
     balance?: boolean
     isDefault?: boolean
     userId?: boolean
+    accountLinked?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -2687,11 +2697,12 @@ export namespace Prisma {
     balance?: boolean
     isDefault?: boolean
     userId?: boolean
+    accountLinked?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "balance" | "isDefault" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["account"]>
+  export type AccountOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "type" | "balance" | "isDefault" | "userId" | "accountLinked" | "createdAt" | "updatedAt", ExtArgs["result"]["account"]>
   export type AccountInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     transactions?: boolean | Account$transactionsArgs<ExtArgs>
@@ -2717,6 +2728,7 @@ export namespace Prisma {
       balance: Prisma.Decimal
       isDefault: boolean
       userId: string
+      accountLinked: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["account"]>
@@ -3150,6 +3162,7 @@ export namespace Prisma {
     readonly balance: FieldRef<"Account", 'Decimal'>
     readonly isDefault: FieldRef<"Account", 'Boolean'>
     readonly userId: FieldRef<"Account", 'String'>
+    readonly accountLinked: FieldRef<"Account", 'Boolean'>
     readonly createdAt: FieldRef<"Account", 'DateTime'>
     readonly updatedAt: FieldRef<"Account", 'DateTime'>
   }
@@ -5972,6 +5985,7 @@ export namespace Prisma {
     balance: 'balance',
     isDefault: 'isDefault',
     userId: 'userId',
+    accountLinked: 'accountLinked',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -6245,6 +6259,7 @@ export namespace Prisma {
     balance?: DecimalFilter<"Account"> | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFilter<"Account"> | boolean
     userId?: StringFilter<"Account"> | string
+    accountLinked?: BoolFilter<"Account"> | boolean
     createdAt?: DateTimeFilter<"Account"> | Date | string
     updatedAt?: DateTimeFilter<"Account"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -6258,6 +6273,7 @@ export namespace Prisma {
     balance?: SortOrder
     isDefault?: SortOrder
     userId?: SortOrder
+    accountLinked?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -6274,6 +6290,7 @@ export namespace Prisma {
     balance?: DecimalFilter<"Account"> | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFilter<"Account"> | boolean
     userId?: StringFilter<"Account"> | string
+    accountLinked?: BoolFilter<"Account"> | boolean
     createdAt?: DateTimeFilter<"Account"> | Date | string
     updatedAt?: DateTimeFilter<"Account"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -6287,6 +6304,7 @@ export namespace Prisma {
     balance?: SortOrder
     isDefault?: SortOrder
     userId?: SortOrder
+    accountLinked?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: AccountCountOrderByAggregateInput
@@ -6306,6 +6324,7 @@ export namespace Prisma {
     balance?: DecimalWithAggregatesFilter<"Account"> | Decimal | DecimalJsLike | number | string
     isDefault?: BoolWithAggregatesFilter<"Account"> | boolean
     userId?: StringWithAggregatesFilter<"Account"> | string
+    accountLinked?: BoolWithAggregatesFilter<"Account"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Account"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Account"> | Date | string
   }
@@ -6575,6 +6594,7 @@ export namespace Prisma {
     type: $Enums.AccountType
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutAccountsInput
@@ -6588,6 +6608,7 @@ export namespace Prisma {
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
     userId: string
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutAccountInput
@@ -6599,6 +6620,7 @@ export namespace Prisma {
     type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutAccountsNestedInput
@@ -6612,6 +6634,7 @@ export namespace Prisma {
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
@@ -6624,6 +6647,7 @@ export namespace Prisma {
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
     userId: string
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -6634,6 +6658,7 @@ export namespace Prisma {
     type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -6645,6 +6670,7 @@ export namespace Prisma {
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -7033,6 +7059,7 @@ export namespace Prisma {
     balance?: SortOrder
     isDefault?: SortOrder
     userId?: SortOrder
+    accountLinked?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7048,6 +7075,7 @@ export namespace Prisma {
     balance?: SortOrder
     isDefault?: SortOrder
     userId?: SortOrder
+    accountLinked?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7059,6 +7087,7 @@ export namespace Prisma {
     balance?: SortOrder
     isDefault?: SortOrder
     userId?: SortOrder
+    accountLinked?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -7844,6 +7873,7 @@ export namespace Prisma {
     type: $Enums.AccountType
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionCreateNestedManyWithoutAccountInput
@@ -7855,6 +7885,7 @@ export namespace Prisma {
     type: $Enums.AccountType
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     transactions?: TransactionUncheckedCreateNestedManyWithoutAccountInput
@@ -7960,6 +7991,7 @@ export namespace Prisma {
     balance?: DecimalFilter<"Account"> | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFilter<"Account"> | boolean
     userId?: StringFilter<"Account"> | string
+    accountLinked?: BoolFilter<"Account"> | boolean
     createdAt?: DateTimeFilter<"Account"> | Date | string
     updatedAt?: DateTimeFilter<"Account"> | Date | string
   }
@@ -8153,6 +8185,7 @@ export namespace Prisma {
     type: $Enums.AccountType
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutAccountsInput
@@ -8165,6 +8198,7 @@ export namespace Prisma {
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
     userId: string
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -8226,6 +8260,7 @@ export namespace Prisma {
     type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutAccountsNestedInput
@@ -8238,6 +8273,7 @@ export namespace Prisma {
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
     userId?: StringFieldUpdateOperationsInput | string
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -8330,6 +8366,7 @@ export namespace Prisma {
     type: $Enums.AccountType
     balance?: Decimal | DecimalJsLike | number | string
     isDefault?: boolean
+    accountLinked?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -8402,6 +8439,7 @@ export namespace Prisma {
     type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUpdateManyWithoutAccountNestedInput
@@ -8413,6 +8451,7 @@ export namespace Prisma {
     type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     transactions?: TransactionUncheckedUpdateManyWithoutAccountNestedInput
@@ -8424,6 +8463,7 @@ export namespace Prisma {
     type?: EnumAccountTypeFieldUpdateOperationsInput | $Enums.AccountType
     balance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     isDefault?: BoolFieldUpdateOperationsInput | boolean
+    accountLinked?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

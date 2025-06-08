@@ -134,6 +134,7 @@ exports.Prisma.AccountScalarFieldEnum = {
   balance: 'balance',
   isDefault: 'isDefault',
   userId: 'userId',
+  accountLinked: 'accountLinked',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

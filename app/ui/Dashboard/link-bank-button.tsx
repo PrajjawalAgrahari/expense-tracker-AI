@@ -1,7 +1,11 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Link as LinkIcon } from "lucide-react";
+import { Link as LinkIcon, Check } from "lucide-react";
+
+interface LinkBankButtonProps {
+  hasLinkedAccounts: boolean;
+}
 
 async function handleLinkBank() {
   try {
@@ -25,7 +29,21 @@ async function handleLinkBank() {
   }
 }
 
-export function LinkBankButton() {
+export function LinkBankButton({ hasLinkedAccounts }: LinkBankButtonProps) {
+  if (hasLinkedAccounts) {
+    return (
+      <Button
+        variant="outline"
+        size="sm"
+        className="flex items-center gap-2 opacity-75"
+        disabled
+      >
+        <Check className="h-4 w-4 text-green-600" />
+        Bank Account Linked
+      </Button>
+    );
+  }
+
   return (
     <Button
       variant="outline"
