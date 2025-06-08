@@ -1,3 +1,4 @@
+import insertaccountandtransactions from "@/app/lib/bank-integration";
 import storeTokens from "@/app/lib/token";
 import { NextResponse } from "next/server";
 
@@ -39,12 +40,13 @@ export async function GET(request: Request) {
         if (!tokenResponse.ok) {
             console.error("Failed to exchange code for token");
             return NextResponse.redirect(new URL("/dashboard?bank_linked=error", request.url));
-        }
-
-        const tokenData = await tokenResponse.json();
+        } const tokenData = await tokenResponse.json();
         const { access_token, refresh_token } = tokenData;
         await storeTokens(access_token, refresh_token);
         console.log("Received token data:", tokenData);
+
+        // Pass the access token to the integration function
+        await insertaccountandtransactions(access_token);
 
         // Redirect back to the dashboard with a success message
         return NextResponse.redirect(new URL("/dashboard?bank_linked=success", request.url));
